@@ -33,11 +33,22 @@ class MyFrame1 : public wxFrame
 	private:
 
 	protected:
+		wxButton* LoadButton;
 		wxButton* RotateButton1;
 		wxButton* RotateButton2;
 		wxButton* ShearButton;
 		wxButton* DistortionButton;
+		wxButton* SaveButton;
 		wxScrolledWindow* ImgScrolledWindow;
+
+		// Virtual event handlers, override them in your derived class
+		virtual void LoadButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void RotateButton1OnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void RotateButton2OnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ShearButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void DistortionButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void SaveButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+
 
 	public:
 

@@ -17,24 +17,30 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer1;
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 
-	wxBoxSizer* bSizer6;
-	bSizer6 = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer* bSizer2;
+	bSizer2 = new wxBoxSizer( wxVERTICAL );
 
-	bSizer6->SetMinSize( wxSize( 130,-1 ) );
+	bSizer2->SetMinSize( wxSize( 130,-1 ) );
+	LoadButton = new wxButton( this, wxID_ANY, wxT("Load Image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
+	bSizer2->Add( LoadButton, 0, wxALL, 5 );
+
 	RotateButton1 = new wxButton( this, wxID_ANY, wxT("Rotate\n( in image plane)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
-	bSizer6->Add( RotateButton1, 0, wxALL, 5 );
+	bSizer2->Add( RotateButton1, 0, wxALL, 5 );
 
 	RotateButton2 = new wxButton( this, wxID_ANY, wxT("Rotate\n (in other planes)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
-	bSizer6->Add( RotateButton2, 0, wxALL, 5 );
+	bSizer2->Add( RotateButton2, 0, wxALL, 5 );
 
 	ShearButton = new wxButton( this, wxID_ANY, wxT("Shear"), wxDefaultPosition, wxSize( 130,30 ), 0 );
-	bSizer6->Add( ShearButton, 0, wxALL, 5 );
+	bSizer2->Add( ShearButton, 0, wxALL, 5 );
 
 	DistortionButton = new wxButton( this, wxID_ANY, wxT("Other image\n distortions"), wxPoint( -1,-1 ), wxSize( 130,50 ), 0 );
-	bSizer6->Add( DistortionButton, 0, wxALL, 5 );
+	bSizer2->Add( DistortionButton, 0, wxALL, 5 );
+
+	SaveButton = new wxButton( this, wxID_ANY, wxT("Save image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
+	bSizer2->Add( SaveButton, 0, wxALL, 5 );
 
 
-	bSizer1->Add( bSizer6, 0, 0, 5 );
+	bSizer1->Add( bSizer2, 0, 0, 5 );
 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
@@ -54,8 +60,24 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer1->Fit( this );
 
 	this->Centre( wxBOTH );
+
+	// Connect Events
+	LoadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::LoadButtonOnButtonClick ), NULL, this );
+	RotateButton1->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::RotateButton1OnButtonClick ), NULL, this );
+	RotateButton2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::RotateButton2OnButtonClick ), NULL, this );
+	ShearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
+	DistortionButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
+	SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
 }
 
 MyFrame1::~MyFrame1()
 {
+	// Disconnect Events
+	LoadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::LoadButtonOnButtonClick ), NULL, this );
+	RotateButton1->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::RotateButton1OnButtonClick ), NULL, this );
+	RotateButton2->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::RotateButton2OnButtonClick ), NULL, this );
+	ShearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
+	DistortionButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
+	SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
+
 }
