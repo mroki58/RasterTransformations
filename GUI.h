@@ -33,11 +33,11 @@ class MyFrame1 : public wxFrame
 	private:
 
 	protected:
-		wxButton* m_button6;
-		wxButton* m_button5;
-		wxButton* m_button7;
-		wxButton* m_button8;
-		wxScrolledWindow* m_scrolledWindow1;
+		wxButton* RotateButton1;
+		wxButton* RotateButton2;
+		wxButton* ShearButton;
+		wxButton* DistortionButton;
+		wxScrolledWindow* ImgScrolledWindow;
 
 	public:
 

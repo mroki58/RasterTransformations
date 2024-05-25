@@ -20,32 +20,30 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	wxBoxSizer* bSizer6;
 	bSizer6 = new wxBoxSizer( wxVERTICAL );
 
+	bSizer6->SetMinSize( wxSize( 130,-1 ) );
+	RotateButton1 = new wxButton( this, wxID_ANY, wxT("Rotate\n( in image plane)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
+	bSizer6->Add( RotateButton1, 0, wxALL, 5 );
 
-	bSizer6->Add( 0, 0, 0, wxEXPAND, 5 );
+	RotateButton2 = new wxButton( this, wxID_ANY, wxT("Rotate\n (in other planes)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
+	bSizer6->Add( RotateButton2, 0, wxALL, 5 );
 
-	m_button6 = new wxButton( this, wxID_ANY, wxT("MyButton"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_button6, 0, wxALL, 5 );
+	ShearButton = new wxButton( this, wxID_ANY, wxT("Shear"), wxDefaultPosition, wxSize( 130,30 ), 0 );
+	bSizer6->Add( ShearButton, 0, wxALL, 5 );
 
-	m_button5 = new wxButton( this, wxID_ANY, wxT("MyButton"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_button5, 0, wxALL, 5 );
-
-	m_button7 = new wxButton( this, wxID_ANY, wxT("MyButton"), wxDefaultPosition, wxDefaultSize, 0 );
-	bSizer6->Add( m_button7, 0, wxALL, 5 );
-
-	m_button8 = new wxButton( this, wxID_ANY, wxT("MyButton"), wxPoint( -1,-1 ), wxDefaultSize, 0 );
-	bSizer6->Add( m_button8, 0, wxALL, 5 );
+	DistortionButton = new wxButton( this, wxID_ANY, wxT("Other image\n distortions"), wxPoint( -1,-1 ), wxSize( 130,50 ), 0 );
+	bSizer6->Add( DistortionButton, 0, wxALL, 5 );
 
 
-	bSizer1->Add( bSizer6, 0, wxEXPAND, 5 );
+	bSizer1->Add( bSizer6, 0, 0, 5 );
 
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer( wxVERTICAL );
 
-	m_scrolledWindow1 = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxSize( 500,500 ), wxHSCROLL|wxVSCROLL );
-	m_scrolledWindow1->SetScrollRate( 5, 5 );
-	m_scrolledWindow1->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
+	ImgScrolledWindow = new wxScrolledWindow( this, wxID_ANY, wxDefaultPosition, wxSize( 500,500 ), wxHSCROLL|wxVSCROLL );
+	ImgScrolledWindow->SetScrollRate( 5, 5 );
+	ImgScrolledWindow->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_INFOTEXT ) );
 
-	bSizer3->Add( m_scrolledWindow1, 1, wxEXPAND | wxALL, 5 );
+	bSizer3->Add( ImgScrolledWindow, 1, wxEXPAND | wxALL, 5 );
 
 
 	bSizer1->Add( bSizer3, 1, wxEXPAND, 5 );
