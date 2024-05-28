@@ -1,6 +1,5 @@
 #include "GUIMyFrame1.h"
 #include "vecmat.h"
-#include "ShepardInterpolatedColor.h"
 #include <fstream>
 
 GUIMyFrame1::GUIMyFrame1( wxWindow* parent )
