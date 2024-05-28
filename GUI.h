@@ -7,20 +7,8 @@
 
 #pragma once
 
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/button.h>
-#include <wx/string.h>
-#include <wx/bitmap.h>
-#include <wx/image.h>
-#include <wx/icon.h>
-#include <wx/gdicmn.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include <wx/sizer.h>
-#include <wx/scrolwin.h>
-#include <wx/frame.h>
+#include <wx/wxprec.h>
+#include <wx/dcbuffer.h>
 
 ///////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +36,7 @@ class MyFrame1 : public wxFrame
 		virtual void ShearButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void DistortionButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SaveButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 
 
 	public:

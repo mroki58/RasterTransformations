@@ -24,7 +24,7 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	LoadButton = new wxButton( this, wxID_ANY, wxT("Load Image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
 	bSizer2->Add( LoadButton, 0, wxALL, 5 );
 
-	RotateButton1 = new wxButton( this, wxID_ANY, wxT("Rotate\n( in image plane)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
+	RotateButton1 = new wxButton( this, wxID_ANY, wxT("Rotate\n(in image plane)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
 	bSizer2->Add( RotateButton1, 0, wxALL, 5 );
 
 	RotateButton2 = new wxButton( this, wxID_ANY, wxT("Rotate\n (in other planes)"), wxDefaultPosition, wxSize( 130,50 ), 0 );
@@ -68,6 +68,7 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	ShearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
 	DistortionButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
 	SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
+	ImgScrolledWindow->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
 }
 
 MyFrame1::~MyFrame1()
@@ -79,5 +80,6 @@ MyFrame1::~MyFrame1()
 	ShearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
 	DistortionButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
 	SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
+	ImgScrolledWindow->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
 
 }

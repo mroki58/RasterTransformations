@@ -21,12 +21,17 @@ class GUIMyFrame1 : public MyFrame1
 		void ShearButtonOnButtonClick( wxCommandEvent& event );
 		void DistortionButtonOnButtonClick( wxCommandEvent& event );
 		void SaveButtonOnButtonClick( wxCommandEvent& event );
+		void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event );
 	public:
 		/** Constructor */
 		GUIMyFrame1( wxWindow* parent );
 	//// end generated class members
 
-
+	protected:
+		wxImage Img_Org;
+		wxImage* Img_Cpy;
+		void Draw();
+		void RotateImagePlane(double angle, int x, int y);
 
 
 
