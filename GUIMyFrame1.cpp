@@ -137,10 +137,195 @@ void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 	Draw();
 }
 
-void GUIMyFrame1::ShearButtonOnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::ShearButtonOnButtonClick(wxCommandEvent& event)
 {
-// TODO: Implement ShearButtonOnButtonClick
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 340), wxDEFAULT_DIALOG_STYLE);
+
+	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxTextValidator validator(wxFILTER_NUMERIC);
+
+	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-shear angle:"), 0, wxALL, 5);
+	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-shear angle:"), 0, wxALL, 5);
+	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, ""), 0, wxALL, 5);
+
+	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
+
+	panel->SetSizer(sizer);
+	panel->Fit();
+
+	dialog->ShowModal();
+	dialog->Destroy();
+	if (Img_Cpy->IsOk())
+	{
+		ShearX(atof(textCtrl1->GetValue()));
+		ShearY(atof(textCtrl2->GetValue()));
+	}
+
 }
+
+void GUIMyFrame1::ShearX(double angle)
+{
+	if (std::fmod(angle + 90, 180) == 0) return; //je¿eli k¹t prosty to pochylenie nie ma sensu bo obraz z³o¿y³by siê do lini prostej
+
+	wxClientDC dc(ImgScrolledWindow);
+	//dc.SetBackground(wxBrush(wxColour(255, 255, 255), wxBRUSHSTYLE_SOLID));
+	dc.Clear();
+	int width = Img_Cpy->GetSize().GetWidth();
+	int height = Img_Cpy->GetSize().GetHeight();
+
+
+	double tangens = tan(angle * M_PI / 180.0);
+	int dif_width = (double)height * tangens; //wartoœæ o ile zmieni siê szerokoœæ obrazka
+	wxImage* Img_new = new wxImage(width + abs(dif_width), height);
+
+	unsigned char* data = Img_Cpy->GetData();
+
+	double xstart = abs((double)dif_width) / 2.0; // punkt referencyjny wzglêdem którego rysujê (przesuniêcie centralnego wiersza)
+
+	for (int y = 0; y < height; y++)
+	{
+		int cur_dif_width = (double)((double)height / 2.0 - y) * tangens; //aktualne przesuniêcie wiersza wzglêdem xstart
+
+		for (int x = 0; x < width; x++) // przepisanie wiersza
+		{
+			Img_new->SetRGB(xstart + x + cur_dif_width, y, data[(y * width + x) * 3 + 0], data[(y * width + x) * 3 + 1], data[(y * width + x) * 3 + 2]);
+		}
+	}
+	delete Img_Cpy;
+	Img_Cpy = CutXborder(Img_new); //trzeba usun¹æ puste pole przed i za obrazkiem które mog³o powstaæ przy kilkukrotnym wywo³ywaniu
+	Draw();
+}
+
+void GUIMyFrame1::ShearY(double angle)
+{
+	if (std::fmod(angle + 90, 180) == 0) return; //je¿eli k¹t prosty to pochylenie nie ma sensu bo obraz z³o¿y³by siê do lini prostej
+
+	wxClientDC dc(ImgScrolledWindow);
+	//dc.SetBackground(wxBrush(wxColour(255, 255, 255), wxBRUSHSTYLE_SOLID));
+	dc.Clear();
+	int width = Img_Cpy->GetSize().GetWidth();
+	int height = Img_Cpy->GetSize().GetHeight();
+
+
+	double tangens = tan(angle * M_PI / 180.0);
+	int dif_height = (double)width * tangens;//wartoœæ o ile zmieni siê wysokoœæ obrazka
+	wxImage* Img_new = new wxImage(width, height + abs(dif_height));
+
+	unsigned char* data = Img_Cpy->GetData();
+
+	double ystart = abs((double)dif_height) / 2.0; // punkt referencyjny wzglêdem którego rysujê (przesuniêcie centralnej kolumny)
+
+	for (int x = 0; x < width; x++)
+	{
+		int cur_dif_height = ((double)width / 2.0 - x) * tangens; //aktualne przesuniêcie kolumny wzglêdem ystart
+		for (int y = 0; y < height; y++)// przepisanie kolumny
+		{
+			Img_new->SetRGB(x, ystart + y + cur_dif_height, data[(y * width + x) * 3 + 0], data[(y * width + x) * 3 + 1], data[(y * width + x) * 3 + 2]);
+		}
+	}
+	delete Img_Cpy;
+	Img_Cpy = CutYborder(Img_new);//trzeba usun¹æ puste pole nad i pod obrazkiem które mog³o powstaæ przy kilkukrotnym wywo³ywaniu
+	Draw();
+}
+
+wxImage* GUIMyFrame1::CutXborder(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
+
+	unsigned char* data = Img->GetData();
+	int cutpos = 0; //pierwsza niepusta kolumna
+
+	for (int x = 0; x < width; x++) //znalezienie cutpos
+	{
+		bool cut = true;
+		for (int y = 0; y < height; y++)
+		{
+			if (data[(y * width + x) * 3 + 0] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 1] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 2] != 0)
+			{
+				cut = false;
+				break;
+			}
+		}
+		if (cut) cutpos++;
+		else break;
+	}
+	if (cutpos == 0) //jeœli spe³niony -> brak "ramki"
+		return Img;
+
+	wxImage* Img_cut = new wxImage(width - 2 * cutpos, height);
+
+	for (int y = 0; y < height; y++)//przepisanie punktów pomij¹j¹c "ramkê".
+	{
+		for (int x = 0; x < width - 2 * cutpos; x++)
+			Img_cut->SetRGB(x, y, data[(y * width + x + cutpos) * 3 + 0], data[(y * width + x + cutpos) * 3 + 1], data[(y * width + x + cutpos) * 3 + 2]);
+	}
+	delete Img;
+	return Img_cut;
+}
+
+wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
+
+	unsigned char* data = Img->GetData();
+	int cutpos = 0; //pierwszy niepusty wiersz
+
+	for (int y = 0; y < height; y++) //znalezienie cutpos
+	{
+		bool cut = true;
+		for (int x = 0; x < width; x++)
+		{
+			if (data[(y * width + x) * 3 + 0] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 1] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 2] != 0)
+			{
+				cut = false;
+				break;
+			}
+		}
+		if (cut) cutpos++;
+		else break;
+	}
+	if (cutpos == 0) //jeœli spe³niony -> brak "ramki"
+		return Img;
+
+	wxImage* Img_cut = new wxImage(width, height - 2 * cutpos);
+	for (int y = 0; y < height - 2 * cutpos; y++) //przepisanie punktów pomij¹j¹c "ramkê".
+	{
+		for (int x = 0; x < width; x++)
+			Img_cut->SetRGB(x, y, data[((y + cutpos) * width + x) * 3 + 0], data[((y + cutpos) * width + x) * 3 + 1], data[((y + cutpos) * width + x) * 3 + 2]);
+	}
+	return Img_cut;
+}
+
 
 void GUIMyFrame1::DistortionButtonOnButtonClick( wxCommandEvent& event )
 {
