@@ -99,22 +99,6 @@ void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
 	dc.Clear();
 	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x,y), true, 0);
 	Draw();
-	width = Img_Cpy->GetSize().GetWidth();
-	height = Img_Cpy->GetSize().GetHeight();
-	size = width * height;
-
-	unsigned char* old = Img_Cpy->GetData(); // stare dane z obrazka
-
-	delete[] vectors;
-	vectors = new Vector4[size];
-
-	for (int i = 0; i < size; ++i)
-	{
-		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
-		vectors[i].data[0] = i % width - width / 2;
-		vectors[i].data[1] = (i / width) - height / 2;
-		vectors[i].data[2] = 0;
-	}
 }
 
 void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
@@ -128,93 +112,105 @@ void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 
 	wxRadioButton* Xaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in YOZ plane",wxDefaultPosition,wxDefaultSize, wxRB_GROUP);
 	wxRadioButton* Yaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in XOZ plane",wxDefaultPosition);
-
-	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-	wxTextCtrl* textCtrl12 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-
-	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
+	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Choose which happens first:"), 0, wxALL, 5);
 	sizer->Add(Xaxis, 0, wxALL | wxEXPAND);
 	sizer->Add(Yaxis, 0, wxALL | wxEXPAND);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
-	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(XOZ):"), 0, wxALL, 5);
-	sizer->Add(textCtrl12, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
-	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-coordinate of center of rotation:"), 0, wxALL, 5);
-	sizer->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(slider2, 0, wxALL | wxEXPAND, 5);
+
 
 	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
 
 	panel->SetSizer(sizer);
 	panel->Fit();
 
+	dialog->Bind(wxEVT_SCROLL_THUMBTRACK, &GUIMyFrame1::_Rotation, this);
+
 	dialog->ShowModal();
 	dialog->Destroy();
 
-	if (Xaxis->GetValue())
-	{
-		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()) , 1);
-	}
-	else
-	{
-		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()), 2);
-	}
 	delete dialog;
+	
 }
 
-wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& srcImage, int newWidth, int newHeight)
+void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 {
-	int width = srcImage.GetWidth();
-	int height = srcImage.GetHeight();
-	wxImage dstImage(newWidth, newHeight);
+	RotateOtherAxis(slider1->GetValue(), slider2->GetValue());
+}
 
-	unsigned char* srcData = srcImage.GetData();
-	unsigned char* dstData = dstImage.GetData();
+wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int newHeight) 
+{
+	int oldWidth = src.GetWidth();
+	int oldHeight = src.GetHeight();
+	wxImage dst(newWidth, newHeight);
 
-	for (int y = 0; y < newHeight; ++y)
-	{
-		for (int x = 0; x < newWidth; ++x)
-		{
-			float gx = ((float)x) / newWidth * (width - 1);
-			float gy = ((float)y) / newHeight * (height - 1);
-			int gxi = (int)gx;
-			int gyi = (int)gy;
-			float c1, c2, c3;
+	unsigned char* srcData = src.GetData();
+	unsigned char* dstData = dst.GetData();
 
-			// Interpolacja dla kana³u R
-			c1 = srcData[3 * (gyi * width + gxi)] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1)] * (gx - gxi);
-			c2 = srcData[3 * ((gyi + 1) * width + gxi)] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1)] * (gx - gxi);
-			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
-			dstData[3 * (y * newWidth + x)] = (unsigned char)c3;
+	double xRatio = static_cast<double>(oldWidth - 1) / newWidth;
+	double yRatio = static_cast<double>(oldHeight - 1) / newHeight;
 
-			// Interpolacja dla kana³u G
-			c1 = srcData[3 * (gyi * width + gxi) + 1] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1) + 1] * (gx - gxi);
-			c2 = srcData[3 * ((gyi + 1) * width + gxi) + 1] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1) + 1] * (gx - gxi);
-			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
-			dstData[3 * (y * newWidth + x) + 1] = (unsigned char)c3;
+	for (int y = 0; y < newHeight; ++y) {
+		for (int x = 0; x < newWidth; ++x) {
+			double gx = x * xRatio;
+			double gy = y * yRatio;
 
-			// Interpolacja dla kana³u B
-			c1 = srcData[3 * (gyi * width + gxi) + 2] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1) + 2] * (gx - gxi);
-			c2 = srcData[3 * ((gyi + 1) * width + gxi) + 2] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1) + 2] * (gx - gxi);
-			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
-			dstData[3 * (y * newWidth + x) + 2] = (unsigned char)c3;
+			int x1 = static_cast<int>(gx);
+			int y1 = static_cast<int>(gy);
+			int x2 =  std::max(0, std::min(oldWidth - 1, x1+1));
+			int y2 =  std::max(0, std::min(oldHeight - 1, y1+1));
+
+			double dx = gx - x1;
+			double dy = gy - y1;
+
+			for (int c = 0; c < 3; ++c) {
+				int offset1 = (y1 * oldWidth + x1) * 3 + c;
+				int offset2 = (y1 * oldWidth + x2) * 3 + c;
+				int offset3 = (y2 * oldWidth + x1) * 3 + c;
+				int offset4 = (y2 * oldWidth + x2) * 3 + c;
+
+				double color = (1 - dx) * (1 - dy) * srcData[offset1] +
+					dx * (1 - dy) * srcData[offset2] +
+					(1 - dx) * dy * srcData[offset3] +
+					dx * dy * srcData[offset4];
+				dstData[(y * newWidth + x) * 3 + c] = static_cast<unsigned char>(color);
+			}
 		}
 	}
 
-	return dstImage;
+	return dst;
 }
 
-void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, int mode)
+
+
+void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 {
+	width = Img_Org.GetSize().GetWidth();
+	height = Img_Org.GetSize().GetHeight();
+	size = width * height;
+
+	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
+
+	vectors = new Vector4[size];
+
+	for (int i = 0; i < size; ++i)
+	{
+		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
+		vectors[i].data[0] = i % width - width / 2;
+		vectors[i].data[1] = (i / width) - height / 2;
+		vectors[i].data[2] = 0;
+	}
+
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
 
-	double angleX = angle1 * M_PI / 180; // na razie zak³adam sta³e wartoœci k¹ta
-	double angleY = angle2 * M_PI / 180; // na razie zak³adam sta³e wartoœci k¹ta
+	double angleX = angle1 * M_PI / 180; 
+	double angleY = angle2 * M_PI / 180; 
 
 	Matrix4 Xaxis;
 
@@ -237,10 +233,7 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, int mode)
 
 	for (int i = 0; i < size; ++i)
 	{
-		if (mode == 1)
-			vectors[i] = Yaxis * Xaxis * vectors[i];
-		if (mode == 2)
-			vectors[i] = Xaxis * Yaxis * vectors[i];
+		vectors[i] = Yaxis * Xaxis * vectors[i];
 		vectors[i].data[0] += width / 2;
 		vectors[i].data[1] += height / 2;
 	}

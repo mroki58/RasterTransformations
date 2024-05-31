@@ -39,8 +39,10 @@ class GUIMyFrame1 : public MyFrame1
 		int width;
 		int height;
 		int size;
-
-		void RotateOtherAxis(double angle1, double angle2, int mode);
+		wxSlider* slider1;
+		wxSlider* slider2;
+		void _Rotation(wxCommandEvent& e);
+		void RotateOtherAxis(double angle1, double angle2);
 		wxImage BilinearInterpolate(const wxImage& srcImage, int newWidth, int newHeight);
 
 
