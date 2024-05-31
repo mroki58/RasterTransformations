@@ -23,6 +23,7 @@ class GUIMyFrame1 : public MyFrame1
 		void DistortionButtonOnButtonClick( wxCommandEvent& event );
 		void SaveButtonOnButtonClick( wxCommandEvent& event );
 		void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event );
+		void OnCheckBoxToggle(wxCommandEvent& event);
 	public:
 		/** Constructor */
 		GUIMyFrame1( wxWindow* parent );
@@ -54,6 +55,11 @@ class GUIMyFrame1 : public MyFrame1
 		//
 
 
+		//punkt 4 checkbox 
+		int* flag_handler; //potrzebne mi do zmieniania stanu txtctr
+		wxTextCtrl* text_handler; //potrzebne mi do zmieniania stanu txtctr
+		wxCheckBox* checkBox_handler; //potrzebne mi do zmieniania stanu txtctr
+		void CorrectDisortion(double A, double B, double C, double D, int flag);
 
 
 
