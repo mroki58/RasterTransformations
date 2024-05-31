@@ -103,21 +103,18 @@ void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
 
 void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 {
-	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(500, 440), wxDEFAULT_DIALOG_STYLE);
+	Img_Org = Img_Cpy->Copy();
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 240), wxDEFAULT_DIALOG_STYLE);
 
 	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
-	wxRadioButton* Xaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in YOZ plane",wxDefaultPosition,wxDefaultSize, wxRB_GROUP);
-	wxRadioButton* Yaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in XOZ plane",wxDefaultPosition);
-	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
-	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Choose which happens first:"), 0, wxALL, 5);
-	sizer->Add(Xaxis, 0, wxALL | wxEXPAND);
-	sizer->Add(Yaxis, 0, wxALL | wxEXPAND);
+	slider1 = new wxSlider(panel, wxID_ANY, 0, -180, 180, wxDefaultPosition, wxDefaultSize);
+	slider2 = new wxSlider(panel, wxID_ANY, 0, -180, 180, wxDefaultPosition, wxDefaultSize);
+
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
 	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(XOZ):"), 0, wxALL, 5);
