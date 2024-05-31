@@ -2,15 +2,15 @@
 #include "vecmat.h"
 #include <fstream>
 
-GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
-	:
-	MyFrame1(parent)
+GUIMyFrame1::GUIMyFrame1( wxWindow* parent )
+:
+MyFrame1( parent )
 {
 	ImgScrolledWindow->SetScrollbars(25, 25, 52, 40);
 	Img_Cpy = new wxImage();
 }
 
-void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
+void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 {
 	wxInitAllImageHandlers();
 
@@ -58,12 +58,12 @@ void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 
 }
 
-void GUIMyFrame1::RotateButton1OnButtonClick(wxCommandEvent& event)
+void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 {
 	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 340), wxDEFAULT_DIALOG_STYLE);
 
-	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+    wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
@@ -71,10 +71,10 @@ void GUIMyFrame1::RotateButton1OnButtonClick(wxCommandEvent& event)
 	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
-	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
-	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
+    sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
+    sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-coordinate of center of rotation:"), 0, wxALL, 5);
 	sizer->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
 
@@ -86,7 +86,7 @@ void GUIMyFrame1::RotateButton1OnButtonClick(wxCommandEvent& event)
 	panel->Fit();
 
 	dialog->ShowModal();
-	dialog->Destroy();
+    dialog->Destroy();
 
 	RotateImagePlane(atof(textCtrl1->GetValue()), atoi(textCtrl2->GetValue()), atoi(textCtrl3->GetValue()));
 
@@ -97,7 +97,7 @@ void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
 {
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
-	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x, y), true, 0);
+	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x,y), true, 0);
 	Draw();
 	width = Img_Cpy->GetSize().GetWidth();
 	height = Img_Cpy->GetSize().GetHeight();
@@ -117,7 +117,7 @@ void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
 	}
 }
 
-void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
+void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 {
 	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(500, 440), wxDEFAULT_DIALOG_STYLE);
 
@@ -126,8 +126,8 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
-	wxRadioButton* Xaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in YOZ plane", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	wxRadioButton* Yaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in XOZ plane", wxDefaultPosition);
+	wxRadioButton* Xaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in YOZ plane",wxDefaultPosition,wxDefaultSize, wxRB_GROUP);
+	wxRadioButton* Yaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in XOZ plane",wxDefaultPosition);
 
 	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 	wxTextCtrl* textCtrl12 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
@@ -157,7 +157,7 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	if (Xaxis->GetValue())
 	{
-		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()), 1);
+		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()) , 1);
 	}
 	else
 	{
