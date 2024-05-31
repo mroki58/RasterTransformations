@@ -2,23 +2,34 @@
 #include "vecmat.h"
 #include <fstream>
 
-GUIMyFrame1::GUIMyFrame1( wxWindow* parent )
-:
-MyFrame1( parent )
+GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
+	:
+	MyFrame1(parent)
 {
 	ImgScrolledWindow->SetScrollbars(25, 25, 52, 40);
 	Img_Cpy = new wxImage();
 }
 
-void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxInitAllImageHandlers();
 
-	wxFileDialog* file_dialog = new wxFileDialog(this, "Load file", "", "", wxT("to jpg (*.jpg)|*.jpg"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	wxString wildcard =
+		"Wszystkie pliki zdjêæ (*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff;*.ppm)|"
+		"*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff;*.ppm|"
+		"Pliki BMP (*.bmp)|*.bmp|"
+		"Pliki GIF (*.gif)|*.gif|"
+		"Pliki JPEG (*.jpeg;*.jpg)|*.jpeg;*.jpg|"
+		"Pliki PNG (*.png)|*.png|"
+		"Pliki TIFF (*.tiff)|*.tiff|"
+		"Pliki PPM (*.ppm)|*.ppm|"
+		"Wszystkie pliki (*.*)|*.*";
+
+	wxFileDialog* file_dialog = new wxFileDialog(this, "Load file", "", "", wildcard, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (file_dialog->ShowModal() == wxID_CANCEL)
 	{
-	return;
+		return;
 	}
 
 	Img_Org.LoadFile(file_dialog->GetPath());
@@ -27,15 +38,32 @@ void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
 	Draw();
+	width = Img_Cpy->GetSize().GetWidth();
+	height = Img_Cpy->GetSize().GetHeight();
+	size = width * height;
+
+	unsigned char* old = Img_Cpy->GetData(); // stare dane z obrazka
+
+	delete[] vectors;
+	vectors = new Vector4[size];
+
+	for (int i = 0; i < size; ++i)
+	{
+		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
+		vectors[i].data[0] = i % width - width / 2;
+		vectors[i].data[1] = (i / width) - height / 2;
+		vectors[i].data[2] = 0;
+	}
+
 
 }
 
-void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::RotateButton1OnButtonClick(wxCommandEvent& event)
 {
 	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 340), wxDEFAULT_DIALOG_STYLE);
 
-    wxPanel* panel = new wxPanel(dialog, wxID_ANY);
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
@@ -43,10 +71,10 @@ void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 
-    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
-    sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
-    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
-    sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
+	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
+	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-coordinate of center of rotation:"), 0, wxALL, 5);
 	sizer->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
 
@@ -58,46 +86,146 @@ void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 	panel->Fit();
 
 	dialog->ShowModal();
-    dialog->Destroy();
+	dialog->Destroy();
 
 	RotateImagePlane(atof(textCtrl1->GetValue()), atoi(textCtrl2->GetValue()), atoi(textCtrl3->GetValue()));
+
+	delete dialog;
 }
 
 void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
 {
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
-	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x,y), true, 0);
+	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x, y), true, 0);
 	Draw();
-}
+	width = Img_Cpy->GetSize().GetWidth();
+	height = Img_Cpy->GetSize().GetHeight();
+	size = width * height;
 
-void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
-{
-	wxClientDC dc(ImgScrolledWindow);
-	dc.Clear();
-	int width = Img_Cpy->GetSize().GetWidth();
-	int height = Img_Cpy->GetSize().GetHeight();
-
-	int size = width * height;
 	unsigned char* old = Img_Cpy->GetData(); // stare dane z obrazka
-	
-	Vector4* vectors = new Vector4[size];
-	
-	double angleY = 0 * M_PI/180; // na razie zak³adam sta³e wartoœci k¹ta
-	double angleZ = 30 * M_PI/180;
 
-	// wczytanie wartoœci kolorów dla wektorów
+	delete[] vectors;
+	vectors = new Vector4[size];
+
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
-		vectors[i].data[0] = i % width - width/2;
-		vectors[i].data[1] = height/2 - (i / width);
+		vectors[i].data[0] = i % width - width / 2;
+		vectors[i].data[1] = (i / width) - height / 2;
 		vectors[i].data[2] = 0;
 	}
-	
+}
+
+void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
+{
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(500, 440), wxDEFAULT_DIALOG_STYLE);
+
+	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxTextValidator validator(wxFILTER_NUMERIC);
+
+	wxRadioButton* Xaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in YOZ plane", wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	wxRadioButton* Yaxis = new wxRadioButton(panel, wxID_ANY, "Rotation in XOZ plane", wxDefaultPosition);
+
+	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl12 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+
+	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Choose which happens first:"), 0, wxALL, 5);
+	sizer->Add(Xaxis, 0, wxALL | wxEXPAND);
+	sizer->Add(Yaxis, 0, wxALL | wxEXPAND);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
+	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(XOZ):"), 0, wxALL, 5);
+	sizer->Add(textCtrl12, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
+	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-coordinate of center of rotation:"), 0, wxALL, 5);
+	sizer->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
+
+	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
+
+	panel->SetSizer(sizer);
+	panel->Fit();
+
+	dialog->ShowModal();
+	dialog->Destroy();
+
+	if (Xaxis->GetValue())
+	{
+		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()), 1);
+	}
+	else
+	{
+		RotateOtherAxis(atof(textCtrl1->GetValue()), atof(textCtrl12->GetValue()), 2);
+	}
+	delete dialog;
+}
+
+wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& srcImage, int newWidth, int newHeight)
+{
+	int width = srcImage.GetWidth();
+	int height = srcImage.GetHeight();
+	wxImage dstImage(newWidth, newHeight);
+
+	unsigned char* srcData = srcImage.GetData();
+	unsigned char* dstData = dstImage.GetData();
+
+	for (int y = 0; y < newHeight; ++y)
+	{
+		for (int x = 0; x < newWidth; ++x)
+		{
+			float gx = ((float)x) / newWidth * (width - 1);
+			float gy = ((float)y) / newHeight * (height - 1);
+			int gxi = (int)gx;
+			int gyi = (int)gy;
+			float c1, c2, c3;
+
+			// Interpolacja dla kana³u R
+			c1 = srcData[3 * (gyi * width + gxi)] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1)] * (gx - gxi);
+			c2 = srcData[3 * ((gyi + 1) * width + gxi)] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1)] * (gx - gxi);
+			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
+			dstData[3 * (y * newWidth + x)] = (unsigned char)c3;
+
+			// Interpolacja dla kana³u G
+			c1 = srcData[3 * (gyi * width + gxi) + 1] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1) + 1] * (gx - gxi);
+			c2 = srcData[3 * ((gyi + 1) * width + gxi) + 1] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1) + 1] * (gx - gxi);
+			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
+			dstData[3 * (y * newWidth + x) + 1] = (unsigned char)c3;
+
+			// Interpolacja dla kana³u B
+			c1 = srcData[3 * (gyi * width + gxi) + 2] * (1 - (gx - gxi)) + srcData[3 * (gyi * width + gxi + 1) + 2] * (gx - gxi);
+			c2 = srcData[3 * ((gyi + 1) * width + gxi) + 2] * (1 - (gx - gxi)) + srcData[3 * ((gyi + 1) * width + gxi + 1) + 2] * (gx - gxi);
+			c3 = c1 * (1 - (gy - gyi)) + c2 * (gy - gyi);
+			dstData[3 * (y * newWidth + x) + 2] = (unsigned char)c3;
+		}
+	}
+
+	return dstImage;
+}
+
+void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, int mode)
+{
+	wxClientDC dc(ImgScrolledWindow);
+	dc.Clear();
+
+	double angleX = angle1 * M_PI / 180; // na razie zak³adam sta³e wartoœci k¹ta
+	double angleY = angle2 * M_PI / 180; // na razie zak³adam sta³e wartoœci k¹ta
+
+	Matrix4 Xaxis;
+
+	Xaxis.data[0][0] = 1;
+	Xaxis.data[1][1] = cos(angleX);
+	Xaxis.data[1][2] = -sin(angleX);
+	Xaxis.data[2][1] = sin(angleX);
+	Xaxis.data[2][2] = cos(angleX);
+	Xaxis.data[3][3] = 1;
 
 	Matrix4 Yaxis;
-	Matrix4 Zaxis;
 
 	Yaxis.data[0][0] = cos(angleY);
 	Yaxis.data[0][2] = sin(angleY);
@@ -106,35 +234,36 @@ void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
 
-	Zaxis.data[0][0] = 1;
-	Zaxis.data[1][1] = cos(angleZ);
-	Zaxis.data[1][2] = -sin(angleZ);
-	Zaxis.data[2][1] = sin(angleZ);
-	Zaxis.data[2][2] = cos(angleZ);
-	Zaxis.data[3][3] = 1;
-
 
 	for (int i = 0; i < size; ++i)
 	{
-		vectors[i] = Zaxis * Yaxis * vectors[i];
+		if (mode == 1)
+			vectors[i] = Yaxis * Xaxis * vectors[i];
+		if (mode == 2)
+			vectors[i] = Xaxis * Yaxis * vectors[i];
 		vectors[i].data[0] += width / 2;
 		vectors[i].data[1] += height / 2;
 	}
 
-	int new_width = (int)(width);
-	int new_height = (int)(height);
-
 	delete Img_Cpy;
-	Img_Cpy = new wxImage(new_width, new_height);
+	Img_Cpy = new wxImage(width, height);
 
+
+	for (int i = 0; i < size - 1; ++i)
+	{
+		Img_Cpy->SetRGB(vectors[i].GetX(), vectors[i].GetY(), vectors[i].GetRed(), vectors[i].GetGreen(), vectors[i].GetBlue());
+	}
+
+	*Img_Cpy = BilinearInterpolate(*Img_Cpy, width, height).Copy();
+
+	Draw();
 
 	for (int i = 0; i < size; ++i)
 	{
-		Img_Cpy->SetRGB(vectors[i].GetX(), height - vectors[i].GetY(), vectors[i].GetRed(), vectors[i].GetGreen(), vectors[i].GetBlue());
+		vectors[i].data[0] -= width / 2;
+		vectors[i].data[1] -= height / 2;
 	}
 
-	delete [] vectors;
-	Draw();
 }
 
 void GUIMyFrame1::ShearButtonOnButtonClick(wxCommandEvent& event)
