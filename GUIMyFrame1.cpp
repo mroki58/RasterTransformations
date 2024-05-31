@@ -585,7 +585,7 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 	sizerD->Add(new wxStaticText(panel, wxID_ANY, "D (Describes the linear saclling of the image)"), 0, wxALL, 5);
 	sizerD->Add(textCtrl4, 0, wxALL | wxEXPAND, 5);
 	sizerCheckBox->Add(checkbox, 0, wxALL | wxEXPAND, 5);
-	sizerCheckBox->Add(new wxStaticText(panel, wxID_ANY, "Set D = 1 - A - B -C for no image scalling"), 0, wxALL, 5);
+	sizerCheckBox->Add(new wxStaticText(panel, wxID_ANY, "Set D = 1 - A - B - C for no image scalling"), 0, wxALL, 5);
 
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Use negative (A, B, C) up to  -1.0 to shift distant points away from center"), 0, wxALL, 5);
