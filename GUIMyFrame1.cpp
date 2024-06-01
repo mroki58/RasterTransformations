@@ -568,6 +568,7 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	delete[] vectors_copy;
 	Draw();
 }
+//metoda do sprawdzania eventu jak sie w okienku dialogowym zazanczy czheckbox
 void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
 {
 	if (checkBox_handler->IsChecked())
