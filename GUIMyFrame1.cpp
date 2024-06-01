@@ -492,10 +492,168 @@ wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
 }
 
 
-void GUIMyFrame1::DistortionButtonOnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int flag)
 {
-// TODO: Implement DistortionButtonOnButtonClick
+	wxClientDC dc(ImgScrolledWindow);
+	dc.Clear();
+	int width = Img_Cpy->GetSize().GetWidth();
+	int height = Img_Cpy->GetSize().GetHeight();
+
+	unsigned char* old = Img_Cpy->GetData(); // stare dane z obrazka
+
+	Vector4* vectors = new Vector4[width * height];
+	Vector4* vectors_copy = new Vector4[width * height]; // potrzebna kopia wartosci starych
+
+
+
+	// wczytanie wartoœci kolorów dla wektorów
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			vectors[j * width + i].SetColor(0, 0, 0);
+			vectors[j * width + i].data[0] = i;
+			vectors[j * width + i].data[1] = j;
+			vectors[j * width + i].data[2] = 0.0;
+
+			vectors_copy[j * width + i].SetColor(old[3 * (j * width + i)], old[3 * (j * width + i) + 1], old[3 * (j * width + i) + 2]);
+			vectors_copy[j * width + i].data[0] = i;
+			vectors_copy[j * width + i].data[1] = j;
+			vectors_copy[j * width + i].data[2] = 0.0;
+		}
+	}
+	// skala
+	int d = width > height ? height : width;
+	d = d / 2;
+
+	double paramA = A; // to powinno tylko wplywac na najdalsze pixele
+	double paramB = B; // takie bardzije uniwerslane i chyba to jest ten parametr alpha z wymagan podstawowych
+	double paramC = C; // kolejne najbardziej uniwersalne wierzac zrodlu
+	double paramD = 1.0 - paramA - paramB - paramC;// skalowanie liniowe albo w sumie w tym wypadku jego brak
+	if (flag == 1) paramD = D;
+
+	double centerX = (double)(width - 1) / 2.0;
+	double centerY = (double)(height - 1) / 2.0;
+
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			//transoframcje
+			double deltaX = ((double)i - centerX) / (double)d;
+			double deltaY = (centerY - (double)j) / (double)d;
+			double dstR = sqrt(deltaX * deltaX + deltaY * deltaY);
+			double srcR = (paramA * dstR * dstR * dstR + paramB * dstR * dstR + paramC * dstR + paramD) * dstR;
+			double factor = abs(srcR / dstR);
+			double srcXd = centerX + (deltaX * factor * d);
+			double srcYd = centerY - (deltaY * factor * d);
+
+			//bez interpolacji rzutowanie na najblizszy pixel
+			int srcX = (int)srcXd;
+			int srcY = (int)srcYd;
+
+			//przypisanie
+			if (srcX >= 0 && srcY >= 0 && srcX < width && srcY < height)
+				vectors[j * width + i].SetColor(vectors_copy[srcY * width + srcX].GetRed(), vectors_copy[srcY * width + srcX].GetGreen(), vectors_copy[srcY * width + srcX].GetBlue());
+
+		}
+	}
+
+	delete Img_Cpy;
+	Img_Cpy = new wxImage(width, height);
+
+	// rysowanie
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			Img_Cpy->SetRGB(vectors[j * width + i].GetX(), vectors[j * width + i].GetY(), vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+		}
+	}
+
+
+	//wywalenie wektorow
+	delete[] vectors;
+	delete[] vectors_copy;
+	Draw();
 }
+void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
+{
+	if (checkBox_handler->IsChecked())
+	{
+		text_handler->Disable();
+		(*flag_handler) = 0;
+	}
+	else
+	{
+		text_handler->Enable();
+		(*flag_handler) = 1;
+	}
+}/*
+ dobra ogolnie moja metoda dziala tak, ze patrze sobie na pixel i na podstawie podanych paramtrow obliczam
+ jaki pixel z niezdeformowanego obrazka powinien tu byc
+ jedyny szkopul jest taki ze jak mamy barrel disortion to zeby obrazek byl ciagle prostokatny to ucina nam toche co moze byc dobrym wciaz rozwiazaniem
+ jutro postaram sie to naprawic
+ fianlnie nie potrzebowalem interpolacji 
+ i jestem (niestety prawie tylko) pewine ze te parametry to beda rozszrzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
+ */
+void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
+{
+	// TODO: Implement DistortionButtonOnButtonClick
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Correction parameters", wxDefaultPosition, wxSize(630, 490), wxDEFAULT_DIALOG_STYLE);
+	int flag = 1;
+	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* sizerA = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* sizerB = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* sizerC = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* sizerD = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* sizerCheckBox = new wxBoxSizer(wxHORIZONTAL);
+
+	wxTextValidator validator(wxFILTER_NUMERIC);
+
+	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl4 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxCheckBox* checkbox = new wxCheckBox(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+	flag_handler = &flag;
+	text_handler = textCtrl4;
+	checkBox_handler = checkbox;
+	checkbox->Bind(wxEVT_CHECKBOX, &GUIMyFrame1::OnCheckBoxToggle, this);
+
+	sizerA->Add(new wxStaticText(panel, wxID_ANY, "A (Affects only the outermost pixels of the image)"), 0, wxALL, 5);
+	sizerA->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizerB->Add(new wxStaticText(panel, wxID_ANY, "B (Most cases only require B optimization)"), 0, wxALL, 5);
+	sizerB->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+	sizerC->Add(new wxStaticText(panel, wxID_ANY, "C (Most uniform correction)"), 0, wxALL, 5);
+	sizerC->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
+	sizerD->Add(new wxStaticText(panel, wxID_ANY, "D (Describes the linear saclling of the image)"), 0, wxALL, 5);
+	sizerD->Add(textCtrl4, 0, wxALL | wxEXPAND, 5);
+	sizerCheckBox->Add(checkbox, 0, wxALL | wxEXPAND, 5);
+	sizerCheckBox->Add(new wxStaticText(panel, wxID_ANY, "Set D = 1 - A - B - C for no image scalling"), 0, wxALL, 5);
+
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Use negative (A, B, C) up to  -1.0 to shift distant points away from center"), 0, wxALL, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Use positive (A, B, C) up to  1.0 to shift distant points towards the center"), 0, wxALL, 5);
+	sizer->Add(sizerA, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(sizerB, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(sizerC, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(sizerD, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(sizerCheckBox, 0, wxALL | wxEXPAND, 5);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, ""), 0, wxALL, 5);
+
+	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
+
+	panel->SetSizer(sizer);
+	panel->Fit();
+	dialog->ShowModal();
+	dialog->Destroy();
+	CorrectDisortion(atof(textCtrl1->GetValue()), atof(textCtrl2->GetValue()), atof(textCtrl3->GetValue()), atof(textCtrl4->GetValue()), flag);
+
+}
+
 
 void GUIMyFrame1::SaveButtonOnButtonClick( wxCommandEvent& event )
 {
