@@ -2,15 +2,15 @@
 #include "vecmat.h"
 #include <fstream>
 
-GUIMyFrame1::GUIMyFrame1( wxWindow* parent )
-:
-MyFrame1( parent )
+GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
+	:
+	MyFrame1(parent)
 {
 	ImgScrolledWindow->SetScrollbars(25, 25, 52, 40);
 	Img_Cpy = new wxImage();
 }
 
-void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxInitAllImageHandlers();
 
@@ -27,7 +27,7 @@ void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 
 	wxFileDialog* file_dialog = new wxFileDialog(this, "Load file", "", "", wildcard, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-	if (file_dialog->ShowModal() == wxID_CANCEL) 
+	if (file_dialog->ShowModal() == wxID_CANCEL)
 	{
 		return;
 	}
@@ -35,17 +35,16 @@ void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 	Img_Org.LoadFile(file_dialog->GetPath());
 	Img_Cpy = new wxImage(Img_Org.Copy());
 
-	wxClientDC dc(ImgScrolledWindow);
-	dc.Clear();
+
 	Draw();
 }
 
-void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::RotateButton1OnButtonClick(wxCommandEvent& event)
 {
 	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 340), wxDEFAULT_DIALOG_STYLE);
 
-    wxPanel* panel = new wxPanel(dialog, wxID_ANY);
-    wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
@@ -53,10 +52,10 @@ void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
 
-    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
-    sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
-    sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
-    sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle:"), 0, wxALL, 5);
+	sizer->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter x-coordinate of center of rotation:"), 0, wxALL, 5);
+	sizer->Add(textCtrl2, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter y-coordinate of center of rotation:"), 0, wxALL, 5);
 	sizer->Add(textCtrl3, 0, wxALL | wxEXPAND, 5);
 
@@ -68,7 +67,7 @@ void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 	panel->Fit();
 
 	dialog->ShowModal();
-    dialog->Destroy();
+	dialog->Destroy();
 
 	RotateImagePlane(atof(textCtrl1->GetValue()), atoi(textCtrl2->GetValue()), atoi(textCtrl3->GetValue()));
 
@@ -140,14 +139,14 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 		}
 	}
 
-	wxClientDC dc(ImgScrolledWindow);
-	dc.Clear();
 	delete Img_Cpy;
 	Img_Cpy = new wxImage(rotatedImage);
+	Img_Cpy = CutXborder(Img_Cpy);
+	Img_Cpy = CutYborder(Img_Cpy);
 	Draw();
 }
 
-void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 {
 	Img_Org = Img_Cpy->Copy();
 	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 240), wxDEFAULT_DIALOG_STYLE);
@@ -178,7 +177,7 @@ void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 	dialog->Destroy();
 
 	delete dialog;
-	
+
 }
 
 void GUIMyFrame1::_Rotation(wxCommandEvent& e)
@@ -186,7 +185,7 @@ void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 	RotateOtherAxis(slider1->GetValue(), slider2->GetValue());
 }
 
-wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int newHeight) 
+wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int newHeight)
 {
 	int oldWidth = src.GetWidth();
 	int oldHeight = src.GetHeight();
@@ -205,8 +204,8 @@ wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int n
 
 			int x1 = static_cast<int>(gx);
 			int y1 = static_cast<int>(gy);
-			int x2 =  std::max(0, std::min(oldWidth - 1, x1+1));
-			int y2 =  std::max(0, std::min(oldHeight - 1, y1+1));
+			int x2 = std::max(0, std::min(oldWidth - 1, x1 + 1));
+			int y2 = std::max(0, std::min(oldHeight - 1, y1 + 1));
 
 			double dx = gx - x1;
 			double dy = gy - y1;
@@ -229,13 +228,12 @@ wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int n
 	return dst;
 }
 
-
-
 void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 {
 	width = Img_Org.GetSize().GetWidth();
 	height = Img_Org.GetSize().GetHeight();
 	size = width * height;
+
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
@@ -249,11 +247,10 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 		vectors[i].data[2] = 0;
 	}
 
-	wxClientDC dc(ImgScrolledWindow);
-	dc.Clear();
 
-	double angleX = angle1 * M_PI / 180; 
-	double angleY = angle2 * M_PI / 180; 
+
+	double angleX = angle1 * M_PI / 180;
+	double angleY = angle2 * M_PI / 180;
 
 	Matrix4 Xaxis;
 
@@ -340,9 +337,7 @@ void GUIMyFrame1::ShearX(double angle)
 {
 	if (std::fmod(angle + 90, 180) == 0) return; //je¿eli k¹t prosty to pochylenie nie ma sensu bo obraz z³o¿y³by siê do lini prostej
 
-	wxClientDC dc(ImgScrolledWindow);
-	//dc.SetBackground(wxBrush(wxColour(255, 255, 255), wxBRUSHSTYLE_SOLID));
-	dc.Clear();
+
 	int width = Img_Cpy->GetSize().GetWidth();
 	int height = Img_Cpy->GetSize().GetHeight();
 
@@ -373,9 +368,7 @@ void GUIMyFrame1::ShearY(double angle)
 {
 	if (std::fmod(angle + 90, 180) == 0) return; //je¿eli k¹t prosty to pochylenie nie ma sensu bo obraz z³o¿y³by siê do lini prostej
 
-	wxClientDC dc(ImgScrolledWindow);
-	//dc.SetBackground(wxBrush(wxColour(255, 255, 255), wxBRUSHSTYLE_SOLID));
-	dc.Clear();
+
 	int width = Img_Cpy->GetSize().GetWidth();
 	int height = Img_Cpy->GetSize().GetHeight();
 
@@ -494,8 +487,6 @@ wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
 
 void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int flag)
 {
-	wxClientDC dc(ImgScrolledWindow);
-	dc.Clear();
 	int width = Img_Cpy->GetSize().GetWidth();
 	int height = Img_Cpy->GetSize().GetHeight();
 
@@ -594,7 +585,7 @@ void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
  jaki pixel z niezdeformowanego obrazka powinien tu byc
  jedyny szkopul jest taki ze jak mamy barrel disortion to zeby obrazek byl ciagle prostokatny to ucina nam toche co moze byc dobrym wciaz rozwiazaniem
  jutro postaram sie to naprawic
- fianlnie nie potrzebowalem interpolacji 
+ fianlnie nie potrzebowalem interpolacji
  i jestem (niestety prawie tylko) pewine ze te parametry to beda rozszrzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
  */
 void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
@@ -655,12 +646,12 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 }
 
 
-void GUIMyFrame1::SaveButtonOnButtonClick( wxCommandEvent& event )
+void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
-// TODO: Implement SaveButtonOnButtonClick
+	// TODO: Implement SaveButtonOnButtonClick
 }
 
-void GUIMyFrame1::ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event )
+void GUIMyFrame1::ImgScrolledWindowOnUpdateUI(wxUpdateUIEvent& event)
 {
 	Draw();
 }
@@ -668,7 +659,7 @@ void GUIMyFrame1::ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event )
 
 void GUIMyFrame1::Draw()
 {
-	wxBitmap bitmap(*Img_Cpy);   
+	wxBitmap bitmap(*Img_Cpy);
 	wxClientDC dc(ImgScrolledWindow);
 	wxBufferedDC buff(&dc);
 	ImgScrolledWindow->DoPrepareDC(buff);
