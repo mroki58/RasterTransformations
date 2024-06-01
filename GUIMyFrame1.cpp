@@ -27,7 +27,7 @@ void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 
 	wxFileDialog* file_dialog = new wxFileDialog(this, "Load file", "", "", wildcard, wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-	if (file_dialog->ShowModal() == wxID_CANCEL)
+	if (file_dialog->ShowModal() == wxID_CANCEL) 
 	{
 		return;
 	}
