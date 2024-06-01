@@ -603,10 +603,10 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
-	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
-	wxTextCtrl* textCtrl4 = new wxTextCtrl(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl1 = new wxTextCtrl(panel, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl2 = new wxTextCtrl(panel, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl3 = new wxTextCtrl(panel, wxID_ANY, "0.0", wxDefaultPosition, wxDefaultSize, 0, validator);
+	wxTextCtrl* textCtrl4 = new wxTextCtrl(panel, wxID_ANY, "1.0", wxDefaultPosition, wxDefaultSize, 0, validator);
 	wxCheckBox* checkbox = new wxCheckBox(panel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
 	flag_handler = &flag;
 	text_handler = textCtrl4;
@@ -645,6 +645,10 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 	panel->Fit();
 	dialog->ShowModal();
 	dialog->Destroy();
+	if (textCtrl1->GetValue() == "") textCtrl1->SetValue("0.0");
+	if (textCtrl2->GetValue() == "") textCtrl2->SetValue("0.0");
+	if (textCtrl3->GetValue() == "") textCtrl3->SetValue("0.0");
+	if (textCtrl4->GetValue() == "") textCtrl4->SetValue("1.0");
 	CorrectDisortion(atof(textCtrl1->GetValue()), atof(textCtrl2->GetValue()), atof(textCtrl3->GetValue()), atof(textCtrl4->GetValue()), flag);
 
 }
