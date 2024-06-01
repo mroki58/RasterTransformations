@@ -613,6 +613,10 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 	checkBox_handler = checkbox;
 	checkbox->Bind(wxEVT_CHECKBOX, &GUIMyFrame1::OnCheckBoxToggle, this);
 
+	checkbox->SetValue(1);
+	text_handler->Disable();
+	(*flag_handler) = 0;
+
 	sizerA->Add(new wxStaticText(panel, wxID_ANY, "A (Affects only the outermost pixels of the image)"), 0, wxALL, 5);
 	sizerA->Add(textCtrl1, 0, wxALL | wxEXPAND, 5);
 	sizerB->Add(new wxStaticText(panel, wxID_ANY, "B (Most cases only require B optimization)"), 0, wxALL, 5);
