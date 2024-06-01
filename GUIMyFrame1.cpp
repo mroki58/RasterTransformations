@@ -582,12 +582,12 @@ void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
 		(*flag_handler) = 1;
 	}
 }/*
- dobra ogolnie moja metoda dziala tak, ze patrze sobie na pixel i na podstawie podanych paramtrow obliczam
+ ogolnie moja metoda dziala tak, ze patrze sobie na pixel i na podstawie podanych parametrow obliczam
  jaki pixel z niezdeformowanego obrazka powinien tu byc
- jedyny szkopul jest taki ze jak mamy barrel disortion to zeby obrazek byl ciagle prostokatny to ucina nam toche co moze byc dobrym wciaz rozwiazaniem
- jutro postaram sie to naprawic
+ jedyny szkopul jest taki ze jak mamy barrel disortion to ten algorytm ucina troche obrazek
+ nie jestem pewien czy jest to blad czy nie
  fianlnie nie potrzebowalem interpolacji
- i jestem (niestety prawie tylko) pewine ze te parametry to beda rozszrzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
+ i jestem (niestety prawie tylko) pewien ze te parametry to beda rozszerzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
  */
 void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 {
