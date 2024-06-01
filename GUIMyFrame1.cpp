@@ -38,24 +38,6 @@ void GUIMyFrame1::LoadButtonOnButtonClick( wxCommandEvent& event )
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
 	Draw();
-	width = Img_Cpy->GetSize().GetWidth();
-	height = Img_Cpy->GetSize().GetHeight();
-	size = width * height;
-
-	unsigned char* old = Img_Cpy->GetData(); // stare dane z obrazka
-
-	delete[] vectors;
-	vectors = new Vector4[size];
-
-	for (int i = 0; i < size; ++i)
-	{
-		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
-		vectors[i].data[0] = i % width - width / 2;
-		vectors[i].data[1] = (i / width) - height / 2;
-		vectors[i].data[2] = 0;
-	}
-
-
 }
 
 void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
@@ -93,11 +75,75 @@ void GUIMyFrame1::RotateButton1OnButtonClick( wxCommandEvent& event )
 	delete dialog;
 }
 
-void GUIMyFrame1::RotateImagePlane(double angle, int x, int y)
+void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 {
+	wxImage image = (*Img_Cpy).Copy();
+
+	int width = image.GetWidth();
+	int height = image.GetHeight();
+
+	double rad = angle * M_PI / 180.0;
+
+	// Corners of the image
+	double corners[4][2] = {
+		{0, 0},
+		{width, 0},
+		{0, height},
+		{width, height}
+	};
+
+	// New corners after rotation
+	double newCorners[4][2];
+	for (int i = 0; i < 4; ++i)
+	{
+		double tx = corners[i][0] - cx;
+		double ty = corners[i][1] - cy;
+
+		newCorners[i][0] = cos(rad) * tx - sin(rad) * ty + cx;
+		newCorners[i][1] = sin(rad) * tx + cos(rad) * ty + cy;
+	}
+
+	double minX = std::min({ newCorners[0][0], newCorners[1][0], newCorners[2][0], newCorners[3][0] });
+	double maxX = std::max({ newCorners[0][0], newCorners[1][0], newCorners[2][0], newCorners[3][0] });
+	double minY = std::min({ newCorners[0][1], newCorners[1][1], newCorners[2][1], newCorners[3][1] });
+	double maxY = std::max({ newCorners[0][1], newCorners[1][1], newCorners[2][1], newCorners[3][1] });
+
+	int newWidth = static_cast<int>(maxX - minX);
+	int newHeight = static_cast<int>(maxY - minY);
+
+	wxImage rotatedImage(newWidth, newHeight, true);
+
+	double offsetX = minX;
+	double offsetY = minY;
+
+	for (int x = 0; x < newWidth; ++x)
+	{
+		for (int y = 0; y < newHeight; ++y)
+		{
+			double tx = x + offsetX - cx;
+			double ty = y + offsetY - cy;
+
+			double rx = cos(rad) * tx + sin(rad) * ty + cx;
+			double ry = -sin(rad) * tx + cos(rad) * ty + cy;
+
+			int srcX = static_cast<int>(rx);
+			int srcY = static_cast<int>(ry);
+
+			if (srcX >= 0 && srcX < width && srcY >= 0 && srcY < height)
+			{
+				rotatedImage.SetRGB(x, y, image.GetRed(srcX, srcY), image.GetGreen(srcX, srcY), image.GetBlue(srcX, srcY));
+			}
+			else
+			{
+				continue;
+			}
+		}
+	}
+
 	wxClientDC dc(ImgScrolledWindow);
 	dc.Clear();
-	*Img_Cpy = Img_Cpy->Rotate(angle * M_PI / 180, wxPoint(x,y), true, 0);
+	delete Img_Cpy;
+	Img_Cpy = new wxImage(rotatedImage);
 	Draw();
 }
 
@@ -112,8 +158,8 @@ void GUIMyFrame1::RotateButton2OnButtonClick( wxCommandEvent& event )
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
 
-	slider1 = new wxSlider(panel, wxID_ANY, 0, -180, 180, wxDefaultPosition, wxDefaultSize);
-	slider2 = new wxSlider(panel, wxID_ANY, 0, -180, 180, wxDefaultPosition, wxDefaultSize);
+	slider1 = new wxSlider(panel, wxID_ANY, 0, -179, 179, wxDefaultPosition, wxDefaultSize);
+	slider2 = new wxSlider(panel, wxID_ANY, 0, -179, 179, wxDefaultPosition, wxDefaultSize);
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
 	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
@@ -464,8 +510,10 @@ void GUIMyFrame1::ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event )
 
 void GUIMyFrame1::Draw()
 {
-	wxBitmap bitmap(*Img_Cpy);          // Tworzymy tymczasowa bitmape na podstawie Img_Cpy
-	wxClientDC dc(ImgScrolledWindow);   // Pobieramy kontekst okna
-	ImgScrolledWindow->DoPrepareDC(dc); // Musimy wywolac w przypadku wxScrolledWindow, zeby suwaki prawidlowo dzialaly
-	dc.DrawBitmap(bitmap, 0, 0, true); // Rysujemy bitmape na kontekscie urzadzenia
+	wxBitmap bitmap(*Img_Cpy);   
+	wxClientDC dc(ImgScrolledWindow);
+	wxBufferedDC buff(&dc);
+	ImgScrolledWindow->DoPrepareDC(buff);
+	buff.Clear();
+	buff.DrawBitmap(bitmap, 0, 0, false);
 }
