@@ -648,7 +648,40 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
-	// TODO: Implement SaveButtonOnButtonClick
+	wxString wildcard = "Pliki BMP (*.bmp)|*.bmp|"
+		"Pliki GIF (*.gif)|*.gif|"
+		"Pliki JPEG (*.jpeg;*.jpg)|*.jpeg;*.jpg|"
+		"Pliki PNG (*.png)|*.png|"
+		"Pliki TIFF (*.tiff)|*.tiff|"
+		"Pliki PPM (*.ppm)|*.ppm";
+
+	wxFileDialog saveFileDialog(this, _("Save Image file"), "", "", wildcard, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+	if (saveFileDialog.ShowModal() == wxID_CANCEL)
+		return;
+
+	wxString path = saveFileDialog.GetPath();
+	wxBitmapType type;
+	switch (saveFileDialog.GetFilterIndex())
+	{
+	case 0:type = wxBITMAP_TYPE_BMP; break;
+	case 1:type = wxBITMAP_TYPE_GIF; break;
+	case 2:type = wxBITMAP_TYPE_JPEG; break;
+	case 3:type = wxBITMAP_TYPE_PNG; break;
+	case 4:type = wxBITMAP_TYPE_TIFF; break;
+	case 5:type = wxBITMAP_TYPE_PNM; break;
+	}
+
+
+	if (!Img_Cpy->IsOk())
+	{
+		return;
+	}
+
+	if (!Img_Cpy->SaveFile(path, type))
+	{
+		wxLogError("Cannot save image to file '%s'.", path);
+	}
 }
 
 void GUIMyFrame1::ImgScrolledWindowOnUpdateUI(wxUpdateUIEvent& event)
