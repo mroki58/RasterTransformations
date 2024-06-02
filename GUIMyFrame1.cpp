@@ -171,12 +171,21 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	panel->SetSizer(sizer);
 	panel->Fit();
 
+	width = Img_Org.GetSize().GetWidth();
+	height = Img_Org.GetSize().GetHeight();
+	size = width * height;
+
+
+	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
+	vectors = new Vector4[size];
+
 	dialog->Bind(wxEVT_SCROLL_THUMBTRACK, &GUIMyFrame1::_Rotation, this);
 
 	dialog->ShowModal();
 	dialog->Destroy();
 
 	delete dialog;
+	delete[] vectors;
 
 }
 
@@ -230,14 +239,7 @@ wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int n
 
 void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 {
-	width = Img_Org.GetSize().GetWidth();
-	height = Img_Org.GetSize().GetHeight();
-	size = width * height;
-
-
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
-
-	vectors = new Vector4[size];
 
 	for (int i = 0; i < size; ++i)
 	{
@@ -246,8 +248,6 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 		vectors[i].data[1] = (i / width) - height / 2;
 		vectors[i].data[2] = 0;
 	}
-
-
 
 	double angleX = angle1 * M_PI / 180;
 	double angleY = angle2 * M_PI / 180;

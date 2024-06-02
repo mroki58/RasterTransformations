@@ -35,7 +35,7 @@ class GUIMyFrame1 : public MyFrame1
 		void Draw();
 		void RotateImagePlane(double angle, int x, int y);
 
-		//Punkt2 i punkt1
+		//Punkt2
 		Vector4* vectors = nullptr;
 		int width;
 		int height;
