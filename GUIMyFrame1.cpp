@@ -157,8 +157,8 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	wxTextValidator validator(wxFILTER_NUMERIC);
 
 
-	slider1 = new wxSlider(panel, wxID_ANY, 0, -179, 179, wxDefaultPosition, wxDefaultSize);
-	slider2 = new wxSlider(panel, wxID_ANY, 0, -179, 179, wxDefaultPosition, wxDefaultSize);
+	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
+	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
 	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
@@ -244,8 +244,8 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
-		vectors[i].data[0] = i % width - width / 2;
-		vectors[i].data[1] = (i / width) - height / 2;
+		vectors[i].data[0] = (i % width - width / 2) / (double)width*2;
+		vectors[i].data[1] = ((i / width) - height / 2) / (double)height*2;
 		vectors[i].data[2] = 0;
 	}
 
@@ -270,32 +270,53 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
 
+	double camera_pos = -2;
+
+	Matrix4 m6;
+	m6.data[0][0] = fabs(camera_pos);
+	m6.data[1][1] = fabs(camera_pos);
+	m6.data[3][2] = 1.0;
+	m6.data[3][3] = fabs(camera_pos);
+
+	Matrix4 m7;
+	m7.data[0][0] = width/2.;
+	m7.data[1][1] = height/2.;
+
 
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i] = Yaxis * Xaxis * vectors[i];
+		vectors[i].data[3] = 1;
+		vectors[i] = m7 * m6 * vectors[i];
+		vectors[i].data[0] /= vectors[i].data[3];
+		vectors[i].data[1] /= vectors[i].data[3];
 		vectors[i].data[0] += width / 2;
 		vectors[i].data[1] += height / 2;
+
 	}
 
 	delete Img_Cpy;
 	Img_Cpy = new wxImage(width, height);
 
 
-	for (int i = 0; i < size - 1; ++i)
+	for (int i = 0; i < width - 1; ++i)
 	{
-		Img_Cpy->SetRGB(vectors[i].GetX(), vectors[i].GetY(), vectors[i].GetRed(), vectors[i].GetGreen(), vectors[i].GetBlue());
+		for (int j = 0; j < height - 1; ++j)
+		{
+			for (int x = (int)(vectors[j * width + i].data[0]); x < vectors[j * width + i + 1].data[0]; ++x)
+			{
+				for (int y = (int)(vectors[j * width + i].data[1]); y < vectors[(j + 1) * width + i].data[1]; ++y)
+				{
+					Img_Cpy->SetRGB(x, y, vectors[j * width + i].GetRed(), vectors[j*width + i].GetGreen(), vectors[j*width + i].GetBlue());
+				}
+			}
+		}
 	}
 
-	*Img_Cpy = BilinearInterpolate(*Img_Cpy, width, height).Copy();
+	//*Img_Cpy = BilinearInterpolate(*Img_Cpy, width, height).Copy();
 
 	Draw();
 
-	for (int i = 0; i < size; ++i)
-	{
-		vectors[i].data[0] -= width / 2;
-		vectors[i].data[1] -= height / 2;
-	}
 
 }
 
