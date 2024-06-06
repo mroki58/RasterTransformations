@@ -159,9 +159,9 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
-	slider3 = new wxSlider(panel, wxID_ANY, 0, -1, 1, wxDefaultPosition, wxDefaultSize);
-	slider4 = new wxSlider(panel, wxID_ANY, 0, -1, 1, wxDefaultPosition, wxDefaultSize);
-	slider5 = new wxSlider(panel, wxID_ANY, -6, -8, -4, wxDefaultPosition, wxDefaultSize);
+	slider3 = new wxSlider(panel, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize);
+	slider4 = new wxSlider(panel, wxID_ANY, 0, -100, 100, wxDefaultPosition, wxDefaultSize);
+	slider5 = new wxSlider(panel, wxID_ANY, -600, -800, -400, wxDefaultPosition, wxDefaultSize);
 
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
@@ -208,6 +208,11 @@ void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 
 void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,double zmiana2, double camera_pos)
 {
+	camera_pos = camera_pos / 100.;
+	zmiana1 = zmiana1 / 100.;
+	zmiana2 = zmiana2 / 100.;
+
+
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
 	for (int i = 0; i < size; ++i)
@@ -239,6 +244,14 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,d
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
 
+	Matrix4 m5;
+	m5.data[0][0] = 1;
+	m5.data[0][3] = zmiana1;
+	m5.data[1][1] = 1;
+	m5.data[1][3] = zmiana2;
+	m5.data[2][2] = 1;
+	m5.data[2][3] = 0;
+
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);
 	m6.data[1][1] = fabs(camera_pos);
@@ -252,7 +265,7 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,d
 
 	for (int i = 0; i < size; ++i)
 	{
-		vectors[i] = Yaxis * Xaxis * vectors[i];
+		vectors[i] = m5 * Yaxis * Xaxis * vectors[i];
 		vectors[i].data[3] = 1;
 		vectors[i] = m7 * m6 * vectors[i];
 		vectors[i].data[0] /= vectors[i].data[3];
