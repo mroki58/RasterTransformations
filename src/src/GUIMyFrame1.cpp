@@ -720,7 +720,7 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 	panel->SetSizer(sizer);
 	panel->Fit();
-	dialog->ShowModal();
+	dialog->ShowModal();	
 	dialog->Destroy();
 	if (textCtrl1->GetValue() == "") textCtrl1->SetValue("0.0");
 	if (textCtrl2->GetValue() == "") textCtrl2->SetValue("0.0");
