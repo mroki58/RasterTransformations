@@ -171,7 +171,7 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify rotation axis (YOZ):"), 0, wxALL, 5);
 	sizer->Add(slider3, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "MOdify rotation axis(XOZ):"), 0, wxALL, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify rotation axis(XOZ):"), 0, wxALL, 5);
 	sizer->Add(slider4, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify camera position:"), 0, wxALL, 5);
 	sizer->Add(slider5, 0, wxALL | wxEXPAND, 5);
@@ -206,12 +206,12 @@ void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 }
 
 
-void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,double zmiana2, double camera_pos)
+void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmiana2, int camera_pos)
 {
 	camera_pos = camera_pos / 100.;
+
 	zmiana1 = zmiana1 / 100.;
 	zmiana2 = zmiana2 / 100.;
-
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
@@ -221,6 +221,7 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,d
 		vectors[i].data[0] = (i % width - width / 2) / (double)width*2;
 		vectors[i].data[1] = ((i / width) - height / 2) / (double)height*2;
 		vectors[i].data[2] = 0;
+		vectors[i].data[3] = 1;
 	}
 
 	double angleX = angle1 * M_PI / 180;
@@ -244,14 +245,6 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,d
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
 
-	Matrix4 m5;
-	m5.data[0][0] = 1;
-	m5.data[0][3] = zmiana1;
-	m5.data[1][1] = 1;
-	m5.data[1][3] = zmiana2;
-	m5.data[2][2] = 1;
-	m5.data[2][3] = 0;
-
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);
 	m6.data[1][1] = fabs(camera_pos);
@@ -265,14 +258,14 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,d
 
 	for (int i = 0; i < size; ++i)
 	{
-		vectors[i] = m5 * Yaxis * Xaxis * vectors[i];
 		vectors[i].data[3] = 1;
+		vectors[i] = Yaxis * Xaxis * vectors[i];
 		vectors[i] = m7 * m6 * vectors[i];
+
 		vectors[i].data[0] /= vectors[i].data[3];
 		vectors[i].data[1] /= vectors[i].data[3];
 		vectors[i].data[0] += width / 2;
 		vectors[i].data[1] += height / 2;
-
 	}
 
 	delete Img_Cpy;
