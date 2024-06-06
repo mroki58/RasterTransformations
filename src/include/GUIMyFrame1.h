@@ -46,7 +46,9 @@ class GUIMyFrame1 : public MyFrame1
 		wxSlider* slider3;
 		wxSlider* slider4;
 		wxSlider* slider5;
-
+		int old_angle1 = 0;
+		int old_angle2 = 0;
+		int old_camera = -600;
 		void _Rotation(wxCommandEvent& e);
 		void RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmiana2, int camera_pos );
 

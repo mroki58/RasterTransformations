@@ -213,7 +213,7 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	//d_zmiana2 *= (width/2);
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
-
+	
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].SetColor(old[3 * i], old[3 * i + 1], old[3 * i + 2]);
@@ -273,36 +273,41 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	m8.data[3][3] = 1;
 
 
-
-	for (int i = 0; i < size; ++i)
+	if (old_angle1 != angle1 || old_angle2 != angle2 || old_camera != camera_pos)
 	{
-		vectors[i].data[3] = 1;
-		vectors[i] = m5 * Yaxis * Xaxis * m8 *  vectors[i];
-		vectors[i] = m7 * m6 * vectors[i];
-
-		vectors[i].data[0] /= vectors[i].data[3];
-		vectors[i].data[1] /= vectors[i].data[3];
-		vectors[i].data[0] += width / 2;
-		vectors[i].data[1] += height / 2;
-	}
-
-	delete Img_Cpy;
-	Img_Cpy = new wxImage(width, height);
-
-
-	for (int i = 0; i < width - 1; ++i)
-	{
-		for (int j = 0; j < height - 1; ++j)
+		for (int i = 0; i < size; ++i)
 		{
-			for (int x = (int)(vectors[j * width + i].data[0]); x < vectors[j * width + i + 1].data[0]; ++x)
+			vectors[i].data[3] = 1;
+			vectors[i] = m5 * Yaxis * Xaxis * m8 * vectors[i];
+			vectors[i] = m7 * m6 * vectors[i];
+
+			vectors[i].data[0] /= vectors[i].data[3];
+			vectors[i].data[1] /= vectors[i].data[3];
+			vectors[i].data[0] += width / 2;
+			vectors[i].data[1] += height / 2;
+		}
+
+		delete Img_Cpy;
+		Img_Cpy = new wxImage(width, height);
+
+
+		for (int i = 0; i < width - 1; ++i)
+		{
+			for (int j = 0; j < height - 1; ++j)
 			{
-				for (int y = (int)(vectors[j * width + i].data[1]); y < vectors[(j + 1) * width + i].data[1]; ++y)
+				for (int x = (int)(vectors[j * width + i].data[0]); x < vectors[j * width + i + 1].data[0]; ++x)
 				{
-					Img_Cpy->SetRGB(x, y, vectors[j * width + i].GetRed(), vectors[j*width + i].GetGreen(), vectors[j*width + i].GetBlue());
+					for (int y = (int)(vectors[j * width + i].data[1]); y < vectors[(j + 1) * width + i].data[1]; ++y)
+					{
+						Img_Cpy->SetRGB(x, y, vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+					}
 				}
 			}
 		}
 	}
+	old_angle1 = angle1;
+	old_angle2 = angle2;
+	old_camera = camera_pos;
 	Draw();
 
 
