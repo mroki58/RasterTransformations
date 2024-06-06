@@ -418,17 +418,17 @@ wxImage* GUIMyFrame1::CutXborder(wxImage* Img)
 
 	unsigned char* data = Img->GetData();
 
-	int cutpos_left = FindCutLeft(Img); //pierwsza niepusta kolumna
-	int cutpos_right = FindCutRight(Img); //ostatnia niepusta kolumna
+	int cutpos_left = FindCutLeft(Img); //pierwsza niepusta kolumna, default=0
+	int cutpos_right = FindCutRight(Img); //ostatnia niepusta kolumna licz¹c od prawej, default=width-1
 
 	if (cutpos_left == 0 && cutpos_right == width) //jeœli spe³niony -> brak "ramki"
 		return Img;
 
-	wxImage* Img_cut = new wxImage(cutpos_right - cutpos_left, height);
+	wxImage* Img_cut = new wxImage(cutpos_right - cutpos_left + 1, height);
 
 	for (int y = 0; y < height; y++)//przepisanie punktów pomij¹j¹c "ramkê".
 	{
-		for (int x = 0; x < cutpos_right - cutpos_left; x++)
+		for (int x = 0; x <= cutpos_right - cutpos_left; x++)
 			Img_cut->SetRGB(x, y, data[(y * width + x + cutpos_left) * 3 + 0], data[(y * width + x + cutpos_left) * 3 + 1], data[(y * width + x + cutpos_left) * 3 + 2]);
 	}
 	delete Img;
@@ -478,9 +478,9 @@ int GUIMyFrame1::FindCutRight(wxImage* Img)
 
 	unsigned char* data = Img->GetData();
 
-	int cutpos = width; //pierwsza niepusta kolumna
+	int cutpos = width - 1; //pierwsza niepusta kolumna od prawej
 
-	for (int x = width; x > 0; x--) //znalezienie cutpos
+	for (int x = width - 1; x > 0; x--) //znalezienie cutpos
 	{
 		bool cut = true;
 		for (int y = 0; y < height; y++)
@@ -513,15 +513,15 @@ wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
 	int height = Img->GetSize().GetHeight();
 
 	unsigned char* data = Img->GetData();
-	int cutpos_top = FindCutTop(Img); //pierwszy niepusty wiersz
-	int cutpos_bottom = FindCutBottom(Img); //ostatni niepusty wiersz
+	int cutpos_top = FindCutTop(Img); //pierwszy niepusty wiersz, default=0
+	int cutpos_bottom = FindCutBottom(Img); //ostatni niepusty wiersz licz¹c od do³u, default=height-1
 
 
 	if (cutpos_top == 0 && cutpos_bottom == height) //jeœli spe³niony -> brak "ramki"
 		return Img;
 
-	wxImage* Img_cut = new wxImage(width, cutpos_bottom - cutpos_top);
-	for (int y = 0; y < cutpos_bottom - cutpos_top; y++) //przepisanie punktów pomij¹j¹c "ramkê".
+	wxImage* Img_cut = new wxImage(width, cutpos_bottom - cutpos_top + 1);
+	for (int y = 0; y <= cutpos_bottom - cutpos_top; y++) //przepisanie punktów pomij¹j¹c "ramkê".
 	{
 		for (int x = 0; x < width; x++)
 			Img_cut->SetRGB(x, y, data[((y + cutpos_top) * width + x) * 3 + 0], data[((y + cutpos_top) * width + x) * 3 + 1], data[((y + cutpos_top) * width + x) * 3 + 2]);
@@ -570,9 +570,9 @@ int GUIMyFrame1::FindCutBottom(wxImage* Img)
 	int height = Img->GetSize().GetHeight();
 
 	unsigned char* data = Img->GetData();
-	int cutpos = height; //pierwszy niepusty wiersz
+	int cutpos = height - 1; //pirwszy niepusty wiersz od do³u
 
-	for (int y = height; y > 0; y--) //znalezienie cutpos
+	for (int y = height - 1; y > 0; y--) //znalezienie cutpos
 	{
 		bool cut = true;
 		for (int x = 0; x < width; x++)
