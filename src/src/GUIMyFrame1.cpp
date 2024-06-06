@@ -149,7 +149,7 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 {
 	Img_Org = Img_Cpy->Copy();
-	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 240), wxDEFAULT_DIALOG_STYLE);
+	wxDialog* dialog = new wxDialog(this, wxID_ANY, "Options", wxDefaultPosition, wxSize(300, 460), wxDEFAULT_DIALOG_STYLE);
 
 	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
@@ -159,11 +159,22 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
+	slider3 = new wxSlider(panel, wxID_ANY, 0, -1, 1, wxDefaultPosition, wxDefaultSize);
+	slider4 = new wxSlider(panel, wxID_ANY, 0, -1, 1, wxDefaultPosition, wxDefaultSize);
+	slider5 = new wxSlider(panel, wxID_ANY, -6, -8, -4, wxDefaultPosition, wxDefaultSize);
+
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
 	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(XOZ):"), 0, wxALL, 5);
 	sizer->Add(slider2, 0, wxALL | wxEXPAND, 5);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify rotation axis (YOZ):"), 0, wxALL, 5);
+	sizer->Add(slider3, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "MOdify rotation axis(XOZ):"), 0, wxALL, 5);
+	sizer->Add(slider4, 0, wxALL | wxEXPAND, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify camera position:"), 0, wxALL, 5);
+	sizer->Add(slider5, 0, wxALL | wxEXPAND, 5);
 
 
 	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
@@ -191,11 +202,11 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 {
-	RotateOtherAxis(slider1->GetValue(), slider2->GetValue());
+	RotateOtherAxis(slider1->GetValue(), slider2->GetValue(), slider3->GetValue(), slider4->GetValue(), slider5->GetValue());
 }
 
 
-void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
+void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2, double zmiana1,double zmiana2, double camera_pos)
 {
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
@@ -227,8 +238,6 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 	Yaxis.data[2][0] = -sin(angleY);
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
-
-	double camera_pos = -5;
 
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);

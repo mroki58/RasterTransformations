@@ -42,8 +42,12 @@ class GUIMyFrame1 : public MyFrame1
 		int size;
 		wxSlider* slider1;
 		wxSlider* slider2;
+		wxSlider* slider3;
+		wxSlider* slider4;
+		wxSlider* slider5;
+
 		void _Rotation(wxCommandEvent& e);
-		void RotateOtherAxis(double angle1, double angle2);
+		void RotateOtherAxis(double angle1, double angle2, double zmiana1, double zmiana2, double camera_pos );
 
 
 		//punkt 3: Pochylenie obrazu (Shear)
