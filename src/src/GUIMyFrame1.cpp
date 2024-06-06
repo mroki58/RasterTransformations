@@ -625,7 +625,9 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 	sizer->Add(new wxStaticText(panel, wxID_ANY, ""), 0, wxALL, 5);
 
-	sizer->Add(new wxButton(panel, wxID_OK), 0, wxALIGN_CENTER, 5);
+	wxButton* okButton = new wxButton(panel, wxID_OK);
+	
+	sizer->Add(okButton, 0, wxALIGN_CENTER, 5);
 
 	panel->SetSizer(sizer);
 	panel->Fit();
