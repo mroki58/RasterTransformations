@@ -194,48 +194,6 @@ void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 	RotateOtherAxis(slider1->GetValue(), slider2->GetValue());
 }
 
-wxImage GUIMyFrame1::BilinearInterpolate(const wxImage& src, int newWidth, int newHeight)
-{
-	int oldWidth = src.GetWidth();
-	int oldHeight = src.GetHeight();
-	wxImage dst(newWidth, newHeight);
-
-	unsigned char* srcData = src.GetData();
-	unsigned char* dstData = dst.GetData();
-
-	double xRatio = static_cast<double>(oldWidth - 1) / newWidth;
-	double yRatio = static_cast<double>(oldHeight - 1) / newHeight;
-
-	for (int y = 0; y < newHeight; ++y) {
-		for (int x = 0; x < newWidth; ++x) {
-			double gx = x * xRatio;
-			double gy = y * yRatio;
-
-			int x1 = static_cast<int>(gx);
-			int y1 = static_cast<int>(gy);
-			int x2 = std::max(0, std::min(oldWidth - 1, x1 + 1));
-			int y2 = std::max(0, std::min(oldHeight - 1, y1 + 1));
-
-			double dx = gx - x1;
-			double dy = gy - y1;
-
-			for (int c = 0; c < 3; ++c) {
-				int offset1 = (y1 * oldWidth + x1) * 3 + c;
-				int offset2 = (y1 * oldWidth + x2) * 3 + c;
-				int offset3 = (y2 * oldWidth + x1) * 3 + c;
-				int offset4 = (y2 * oldWidth + x2) * 3 + c;
-
-				double color = (1 - dx) * (1 - dy) * srcData[offset1] +
-					dx * (1 - dy) * srcData[offset2] +
-					(1 - dx) * dy * srcData[offset3] +
-					dx * dy * srcData[offset4];
-				dstData[(y * newWidth + x) * 3 + c] = static_cast<unsigned char>(color);
-			}
-		}
-	}
-
-	return dst;
-}
 
 void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 {
@@ -270,7 +228,7 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
 
-	double camera_pos = -2;
+	double camera_pos = -5;
 
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);
@@ -312,9 +270,6 @@ void GUIMyFrame1::RotateOtherAxis(double angle1, double angle2)
 			}
 		}
 	}
-
-	//*Img_Cpy = BilinearInterpolate(*Img_Cpy, width, height).Copy();
-
 	Draw();
 
 

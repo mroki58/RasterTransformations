@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GUI.cpp" />
-    <ClCompile Include="GUIMyFrame1.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="vecmat.cpp" />
+    <ClInclude Include="src\include\GUI.h" />
+    <ClInclude Include="src\include\GUIMyFrame1.h" />
+    <ClInclude Include="src\include\vecmat.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="GUI.h" />
-    <ClInclude Include="GUIMyFrame1.h" />
-    <ClInclude Include="vecmat.h" />
+    <ClCompile Include="src\src\GUI.cpp" />
+    <ClCompile Include="src\src\GUIMyFrame1.cpp" />
+    <ClCompile Include="src\src\main.cpp" />
+    <ClCompile Include="src\src\vecmat.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -141,6 +141,9 @@
       <ConformanceMode>true</ConformanceMode>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)src\include;$(SolutionDir)src\src</AdditionalIncludeDirectories>
+      <AdditionalModuleDependencies>
+      </AdditionalModuleDependencies>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -44,7 +44,6 @@ class GUIMyFrame1 : public MyFrame1
 		wxSlider* slider2;
 		void _Rotation(wxCommandEvent& e);
 		void RotateOtherAxis(double angle1, double angle2);
-		wxImage BilinearInterpolate(const wxImage& srcImage, int newWidth, int newHeight);
 
 
 		//punkt 3: Pochylenie obrazu (Shear)
