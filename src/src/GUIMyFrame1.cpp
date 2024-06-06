@@ -210,9 +210,6 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 {
 	camera_pos = camera_pos / 100.;
 
-	zmiana1 = zmiana1 / 100.;
-	zmiana2 = zmiana2 / 100.;
-
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
 	for (int i = 0; i < size; ++i)
@@ -244,6 +241,14 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	Yaxis.data[2][0] = -sin(angleY);
 	Yaxis.data[2][2] = cos(angleY);
 	Yaxis.data[3][3] = 1;
+
+	Matrix4 m5;
+	m5.data[0][0] = 1;
+	m5.data[0][3] = zmiana1;
+	m5.data[1][1] = 1;
+	m5.data[1][3] = zmiana2;
+	m5.data[2][2] = 1;
+	m5.data[2][3] = 0;
 
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);
