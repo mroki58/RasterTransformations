@@ -83,7 +83,6 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 
 	double rad = angle * M_PI / 180.0;
 
-	// Corners of the image
 	double corners[4][2] = {
 		{0, 0},
 		{width, 0},
@@ -91,7 +90,6 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 		{width, height}
 	};
 
-	// New corners after rotation
 	double newCorners[4][2];
 	for (int i = 0; i < 4; ++i)
 	{
@@ -162,15 +160,17 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	slider5 = new wxSlider(panel, wxID_ANY, -600, -800, -400, wxDefaultPosition, wxDefaultSize);
 
 
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(YOZ):"), 0, wxALL, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle of rotation in X-axis:"), 0, wxALL, 5);
 	sizer->Add(slider1, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle(XOZ):"), 0, wxALL, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Enter Angle of rotation in Y-xis:"), 0, wxALL, 5);
 	sizer->Add(slider2, 0, wxALL | wxEXPAND, 5);
 
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify rotation axis (YOZ):"), 0, wxALL, 5);
-	sizer->Add(slider3, 0, wxALL | wxEXPAND, 5);
-	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify rotation axis(XOZ):"), 0, wxALL, 5);
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify center point of rotation X-axis:"), 0, wxALL, 5);
 	sizer->Add(slider4, 0, wxALL | wxEXPAND, 5);
+
+	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify center point of rotation Y-axis:"), 0, wxALL, 5);
+	sizer->Add(slider3, 0, wxALL | wxEXPAND, 5);
+
 	sizer->Add(new wxStaticText(panel, wxID_ANY, "Modify camera position:"), 0, wxALL, 5);
 	sizer->Add(slider5, 0, wxALL | wxEXPAND, 5);
 
@@ -211,7 +211,7 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	double d_zmiana2 = zmiana2 / 100.0;
 	//d_zmiana1 *= (height/2);
 	//d_zmiana2 *= (width/2);
-	if (old_zmiana1 != zmiana1 || old_zmiana2 != zmiana2)
+	if ( old_zmiana1 != zmiana1 || old_zmiana2 != zmiana2 )
 	{
 		slider1->SetValue(0);
 		slider2->SetValue(0);
@@ -569,7 +569,7 @@ int GUIMyFrame1::FindCutBottom(wxImage* Img)
 	int width = Img->GetSize().GetWidth();
 	int height = Img->GetSize().GetHeight();
 
-	unsigned char* data = Img->GetData();
+	unsigned char* data = Img->GetData(); 
 	int cutpos = height - 1; //pirwszy niepusty wiersz od do³u
 
 	for (int y = height - 1; y > 0; y--) //znalezienie cutpos
