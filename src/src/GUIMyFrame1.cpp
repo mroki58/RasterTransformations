@@ -154,8 +154,6 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	wxPanel* panel = new wxPanel(dialog, wxID_ANY);
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxTextValidator validator(wxFILTER_NUMERIC);
-
 
 	slider1 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
 	slider2 = new wxSlider(panel, wxID_ANY, 0, -90, 90, wxDefaultPosition, wxDefaultSize);
