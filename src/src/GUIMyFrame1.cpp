@@ -281,14 +281,6 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	m8.data[2][3] = 0;
 	m8.data[3][3] = 1;
 
-	if (old_zmiana1 != zmiana1 || old_zmiana2 != zmiana2)
-	{
-		slider1->SetValue(0);
-		slider1->SetValue(0);
-		angle1 = 0;
-		angle2 = 0;
-	}
-	
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].data[3] = 1;
