@@ -755,9 +755,13 @@ void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 }
 
 void GUIMyFrame1::ShowGrid()
-{}
+{
+
+}
 void GUIMyFrame1::HideGrid()
-{}
+{
+
+}
 void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxString wildcard = "Pliki BMP (*.bmp)|*.bmp|"
