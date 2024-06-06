@@ -376,6 +376,31 @@ wxImage* GUIMyFrame1::CutXborder(wxImage* Img)
 	int height = Img->GetSize().GetHeight();
 
 	unsigned char* data = Img->GetData();
+
+	int cutpos_left = FindCutLeft(Img); //pierwsza niepusta kolumna
+	int cutpos_right = FindCutRight(Img); //ostatnia niepusta kolumna
+
+	if (cutpos_left == 0 && cutpos_right == width) //jeœli spe³niony -> brak "ramki"
+		return Img;
+
+	wxImage* Img_cut = new wxImage(cutpos_right - cutpos_left, height);
+
+	for (int y = 0; y < height; y++)//przepisanie punktów pomij¹j¹c "ramkê".
+	{
+		for (int x = 0; x < cutpos_right - cutpos_left; x++)
+			Img_cut->SetRGB(x, y, data[(y * width + x + cutpos_left) * 3 + 0], data[(y * width + x + cutpos_left) * 3 + 1], data[(y * width + x + cutpos_left) * 3 + 2]);
+	}
+	delete Img;
+	return Img_cut;
+}
+
+int GUIMyFrame1::FindCutLeft(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
+
+	unsigned char* data = Img->GetData();
+
 	int cutpos = 0; //pierwsza niepusta kolumna
 
 	for (int x = 0; x < width; x++) //znalezienie cutpos
@@ -402,21 +427,68 @@ wxImage* GUIMyFrame1::CutXborder(wxImage* Img)
 		if (cut) cutpos++;
 		else break;
 	}
-	if (cutpos == 0) //jeœli spe³niony -> brak "ramki"
-		return Img;
+	return cutpos;
+}
 
-	wxImage* Img_cut = new wxImage(width - 2 * cutpos, height);
+int GUIMyFrame1::FindCutRight(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
 
-	for (int y = 0; y < height; y++)//przepisanie punktów pomij¹j¹c "ramkê".
+	unsigned char* data = Img->GetData();
+
+	int cutpos = width; //pierwsza niepusta kolumna
+
+	for (int x = width; x > 0; x--) //znalezienie cutpos
 	{
-		for (int x = 0; x < width - 2 * cutpos; x++)
-			Img_cut->SetRGB(x, y, data[(y * width + x + cutpos) * 3 + 0], data[(y * width + x + cutpos) * 3 + 1], data[(y * width + x + cutpos) * 3 + 2]);
+		bool cut = true;
+		for (int y = 0; y < height; y++)
+		{
+			if (data[(y * width + x) * 3 + 0] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 1] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 2] != 0)
+			{
+				cut = false;
+				break;
+			}
+		}
+		if (cut) cutpos--;
+		else break;
 	}
-	delete Img;
-	return Img_cut;
+	return cutpos;
 }
 
 wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
+
+	unsigned char* data = Img->GetData();
+	int cutpos_top = FindCutTop(Img); //pierwszy niepusty wiersz
+	int cutpos_bottom = FindCutBottom(Img); //ostatni niepusty wiersz
+
+
+	if (cutpos_top == 0 && cutpos_bottom == height) //jeœli spe³niony -> brak "ramki"
+		return Img;
+
+	wxImage* Img_cut = new wxImage(width, cutpos_bottom - cutpos_top);
+	for (int y = 0; y < cutpos_bottom - cutpos_top; y++) //przepisanie punktów pomij¹j¹c "ramkê".
+	{
+		for (int x = 0; x < width; x++)
+			Img_cut->SetRGB(x, y, data[((y + cutpos_top) * width + x) * 3 + 0], data[((y + cutpos_top) * width + x) * 3 + 1], data[((y + cutpos_top) * width + x) * 3 + 2]);
+	}
+	return Img_cut;
+}
+
+int GUIMyFrame1::FindCutTop(wxImage* Img)
 {
 	int width = Img->GetSize().GetWidth();
 	int height = Img->GetSize().GetHeight();
@@ -448,16 +520,42 @@ wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
 		if (cut) cutpos++;
 		else break;
 	}
-	if (cutpos == 0) //jeœli spe³niony -> brak "ramki"
-		return Img;
+	return cutpos;
+}
 
-	wxImage* Img_cut = new wxImage(width, height - 2 * cutpos);
-	for (int y = 0; y < height - 2 * cutpos; y++) //przepisanie punktów pomij¹j¹c "ramkê".
+int GUIMyFrame1::FindCutBottom(wxImage* Img)
+{
+	int width = Img->GetSize().GetWidth();
+	int height = Img->GetSize().GetHeight();
+
+	unsigned char* data = Img->GetData();
+	int cutpos = height; //pierwszy niepusty wiersz
+
+	for (int y = height; y > 0; y--) //znalezienie cutpos
 	{
+		bool cut = true;
 		for (int x = 0; x < width; x++)
-			Img_cut->SetRGB(x, y, data[((y + cutpos) * width + x) * 3 + 0], data[((y + cutpos) * width + x) * 3 + 1], data[((y + cutpos) * width + x) * 3 + 2]);
+		{
+			if (data[(y * width + x) * 3 + 0] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 1] != 0)
+			{
+				cut = false;
+				break;
+			}
+			if (data[(y * width + x) * 3 + 2] != 0)
+			{
+				cut = false;
+				break;
+			}
+		}
+		if (cut) cutpos--;
+		else break;
 	}
-	return Img_cut;
+	return cutpos;
 }
 
 
