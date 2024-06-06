@@ -28,6 +28,7 @@ class MyFrame1 : public wxFrame
 		wxButton* DistortionButton;
 		wxButton* SaveButton;
 		wxScrolledWindow* ImgScrolledWindow;
+		wxCheckBox* GridBox;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void LoadButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
@@ -36,6 +37,7 @@ class MyFrame1 : public wxFrame
 		virtual void ShearButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void DistortionButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SaveButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
+		virtual void GridBoxToggle(wxCommandEvent& event) { event.Skip(); }
 		virtual void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 
 

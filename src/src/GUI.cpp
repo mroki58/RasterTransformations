@@ -18,7 +18,9 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	bSizer1 = new wxBoxSizer( wxHORIZONTAL );
 
 	wxBoxSizer* bSizer2;
+	wxBoxSizer* bSizerGrid;
 	bSizer2 = new wxBoxSizer( wxVERTICAL );
+	bSizerGrid = new wxBoxSizer(wxHORIZONTAL);
 
 	bSizer2->SetMinSize( wxSize( 130,-1 ) );
 	LoadButton = new wxButton( this, wxID_ANY, wxT("Load Image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
@@ -39,6 +41,11 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	SaveButton = new wxButton( this, wxID_ANY, wxT("Save image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
 	bSizer2->Add( SaveButton, 0, wxALL, 5 );
 
+	GridBox = new wxCheckBox(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+	bSizerGrid->Add(GridBox, 0, wxALL, 5);
+	bSizerGrid->Add(new wxStaticText(this, wxID_ANY, "Toggle grid"), 0, wxALL, 5);
+
+	bSizer2->Add(bSizerGrid, 0, wxALL, 5);
 
 	bSizer1->Add( bSizer2, 0, 0, 5 );
 
@@ -68,6 +75,7 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	ShearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
 	DistortionButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
 	SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
+	GridBox->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::GridBoxToggle), NULL, this);
 	ImgScrolledWindow->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
 }
 
@@ -80,6 +88,7 @@ MyFrame1::~MyFrame1()
 	ShearButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
 	DistortionButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
 	SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
+	GridBox->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::GridBoxToggle), NULL, this);
 	ImgScrolledWindow->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
 
 }
