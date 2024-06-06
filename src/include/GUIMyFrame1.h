@@ -53,8 +53,12 @@ class GUIMyFrame1 : public MyFrame1
 		//punkt 3: Pochylenie obrazu (Shear)
 		void ShearX(double angle); //przechylenie na osi x
 		void ShearY(double angle); //przechylenie na osi y
-		wxImage* CutXborder(wxImage* Img); //Funkcja usuwa pusty obszar na lewo i prawo od obrazka który mo¿e powstaæ gdy wywo³a siê ShearX
-		wxImage* CutYborder(wxImage* Img); //Funkcja usuwa pusty obszar na górze i dole od obrazka który mo¿e powstaæ gdy wywo³a siê ShearY
+		wxImage* CutXborder(wxImage* Img); //Funkcja usuwa pusty obszar na lewo i prawo od obrazka
+		int FindCutLeft(wxImage* Img); //Funkcja znajduje szerokosc pustego obszaru na lewo od obrazka
+		int FindCutRight(wxImage* Img); //Funkcja znajduje szerokosc pustego obszaru na prawo od obrazka
+		wxImage* CutYborder(wxImage* Img); //Funkcja usuwa pusty obszar na górze i dole od obrazka
+		int FindCutTop(wxImage* Img); //Funkcja znajduje wysokosc pustego obszaru nad obrazkiem
+		int FindCutBottom(wxImage* Img); //Funkcja znajduje wysokosc pustego obszaru pod obrazkiem
 		//
 
 
