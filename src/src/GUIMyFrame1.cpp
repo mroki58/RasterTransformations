@@ -207,6 +207,10 @@ void GUIMyFrame1::_Rotation(wxCommandEvent& e)
 void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmiana2, int camera_pos)
 {
 	camera_pos = camera_pos / 100.;
+	double d_zmiana1 = zmiana1 / 100.0;
+	double d_zmiana2 = zmiana2 / 100.0;
+	//d_zmiana1 *= (height/2);
+	//d_zmiana2 *= (width/2);
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 
@@ -242,11 +246,12 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 
 	Matrix4 m5;
 	m5.data[0][0] = 1;
-	m5.data[0][3] = zmiana1;
+	m5.data[0][3] = d_zmiana1;
 	m5.data[1][1] = 1;
-	m5.data[1][3] = zmiana2;
+	m5.data[1][3] = d_zmiana2;
 	m5.data[2][2] = 1;
 	m5.data[2][3] = 0;
+	m5.data[3][3] = 1;
 
 	Matrix4 m6;
 	m6.data[0][0] = fabs(camera_pos);
@@ -258,11 +263,21 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	m7.data[0][0] = width/2.;
 	m7.data[1][1] = height/2.;
 
+	Matrix4 m8;
+	m8.data[0][0] = 1;
+	m8.data[0][3] = -d_zmiana1;
+	m8.data[1][1] = 1;
+	m8.data[1][3] = -d_zmiana2;
+	m8.data[2][2] = 1;
+	m8.data[2][3] = 0;
+	m8.data[3][3] = 1;
+
+
 
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].data[3] = 1;
-		vectors[i] = Yaxis * Xaxis * vectors[i];
+		vectors[i] = m5 * Yaxis * Xaxis * m8 *  vectors[i];
 		vectors[i] = m7 * m6 * vectors[i];
 
 		vectors[i].data[0] /= vectors[i].data[3];
