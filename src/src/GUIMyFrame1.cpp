@@ -184,8 +184,6 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	height = Img_Org.GetSize().GetHeight();
 	size = width * height;
 
-
-	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 	vectors = new Vector4[size];
 
 	dialog->Bind(wxEVT_SCROLL_THUMBTRACK, &GUIMyFrame1::_Rotation, this);
@@ -195,6 +193,12 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 
 	delete dialog;
 	delete[] vectors;
+
+	Img_Cpy = CutXborder(Img_Cpy);
+	Img_Cpy = CutYborder(Img_Cpy);
+
+
+	Draw();
 
 }
 
@@ -209,17 +213,6 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	camera_pos = camera_pos / 100.;
 	double d_zmiana1 = zmiana1 / 100.0;
 	double d_zmiana2 = zmiana2 / 100.0;
-	//d_zmiana1 *= (height/2);
-	//d_zmiana2 *= (width/2);
-	if ( old_zmiana1 != zmiana1 || old_zmiana2 != zmiana2 )
-	{
-		slider1->SetValue(0);
-		slider2->SetValue(0);
-		angle1 = 0;
-		angle2 = 0;
-		old_zmiana1 = zmiana1;
-		old_zmiana2 = zmiana2;
-	}
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
 	
@@ -294,7 +287,7 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	}
 
 	delete Img_Cpy;
-	Img_Cpy = new wxImage(width, height);
+	Img_Cpy = new wxImage(width + width/2., height + height/2.);
 
 
 	for (int i = 0; i < width - 1; ++i)
@@ -305,14 +298,13 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 			{
 				for (int y = (int)(vectors[j * width + i].data[1]); y < vectors[(j + 1) * width + i].data[1]; ++y)
 				{
-					Img_Cpy->SetRGB(x, y, vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+					Img_Cpy->SetRGB(width/4. + x, height/4. + y, vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
 				}
 			}
 		}
 	}
 
 	Draw();
-
 
 }
 
