@@ -26,6 +26,7 @@
   <ItemGroup>
     <ClCompile Include="src\src\GUI.cpp" />
     <ClCompile Include="src\src\GUIMyFrame1.cpp" />
+    <ClCompile Include="src\src\GUIMyFrameAlgorithms.cpp" />
     <ClCompile Include="src\src\main.cpp" />
     <ClCompile Include="src\src\vecmat.cpp" />
   </ItemGroup>
