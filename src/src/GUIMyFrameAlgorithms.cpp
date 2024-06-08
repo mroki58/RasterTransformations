@@ -64,7 +64,7 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 		}
 	}
 
-	delete Img_Cpy;
+	ImagesHistory.push_back(Img_Cpy);
 	Img_Cpy = new wxImage(rotatedImage);
 	Img_Cpy = CutXborder(Img_Cpy);
 	Img_Cpy = CutYborder(Img_Cpy);
@@ -149,8 +149,9 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 		vectors[i].data[0] += width / 2;
 		vectors[i].data[1] += height / 2;
 	}
+	if(Img_Cpy != ImagesHistory.back())
+		delete Img_Cpy;
 
-	delete Img_Cpy;
 	Img_Cpy = new wxImage(width + width / 2., height + height / 2.);
 
 
@@ -198,7 +199,7 @@ void GUIMyFrame1::ShearX(double angle)
 			Img_new->SetRGB(xstart + x + cur_dif_width, y, data[(y * width + x) * 3 + 0], data[(y * width + x) * 3 + 1], data[(y * width + x) * 3 + 2]);
 		}
 	}
-	delete Img_Cpy;
+	ImagesHistory.push_back(Img_Cpy);
 	Img_Cpy = CutXborder(Img_new); //trzeba usun¹æ puste pole przed i za obrazkiem które mog³o powstaæ przy kilkukrotnym wywo³ywaniu
 	Draw();
 }
@@ -487,7 +488,7 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 		}
 	}
 
-	delete Img_Cpy;
+	ImagesHistory.push_back(Img_Cpy);
 	Img_Cpy = new wxImage(width, height);
 
 	// rysowanie

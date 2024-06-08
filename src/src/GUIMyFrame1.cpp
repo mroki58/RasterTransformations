@@ -7,7 +7,34 @@ GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
 {
 	ImgScrolledWindow->SetScrollbars(25, 25, 52, 40);
 	Img_Cpy = new wxImage();
+
+	menuBar = new wxMenuBar();
+	edit = new wxMenu();
+	menuBar->Append(edit, _("&Edit"));
+	edit->Append(ID_MENU_UNDO, _("&Undo"), _(""), wxITEM_NORMAL);
+
+	this->Bind(wxEVT_MENU, [&, this](wxCommandEvent& e) 
+		{
+			if (ImagesHistory.size() > 0)
+			{
+				delete Img_Cpy;
+				Img_Cpy = ImagesHistory.back();
+				ImagesHistory.pop_back();
+			}
+
+		}, ID_MENU_UNDO);
+
+	SetMenuBar(menuBar);
 }
+
+GUIMyFrame1::~GUIMyFrame1()
+{
+	for (int i = ImagesHistory.size() - 1; i >= 0; --i)
+	{
+		delete ImagesHistory[i];
+	}
+}
+
 
 void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 {
@@ -32,8 +59,15 @@ void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 	}
 
 	Img_Org.LoadFile(file_dialog->GetPath());
-	Img_Cpy = new wxImage(Img_Org.Copy());
 
+	for (int i = ImagesHistory.size() - 1; i >= 0; --i)
+	{
+		delete ImagesHistory[i];
+		ImagesHistory.pop_back();
+	}
+
+
+	Img_Cpy = new wxImage(Img_Org.Copy());
 
 	Draw();
 }
@@ -112,6 +146,7 @@ void GUIMyFrame1::RotateButton2OnButtonClick(wxCommandEvent& event)
 	width = Img_Org.GetSize().GetWidth();
 	height = Img_Org.GetSize().GetHeight();
 	size = width * height;
+	ImagesHistory.push_back(Img_Cpy);
 
 	vectors = new Vector4[size];
 
