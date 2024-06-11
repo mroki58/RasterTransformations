@@ -349,6 +349,7 @@ wxImage* GUIMyFrame1::CutYborder(wxImage* Img)
 		for (int x = 0; x < width; x++)
 			Img_cut->SetRGB(x, y, data[((y + cutpos_top) * width + x) * 3 + 0], data[((y + cutpos_top) * width + x) * 3 + 1], data[((y + cutpos_top) * width + x) * 3 + 2]);
 	}
+	delete Img;
 	return Img_cut;
 }
 
