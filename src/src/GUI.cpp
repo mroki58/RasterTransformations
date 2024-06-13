@@ -38,10 +38,10 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	DistortionButton = new wxButton( this, wxID_ANY, wxT("Other image\n distortions"), wxPoint( -1,-1 ), wxSize( 130,50 ), 0 );
 	bSizer2->Add( DistortionButton, 0, wxALL, 5 );
 
-	MirrorX = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n x axis"), wxDefaultPosition, wxSize(130, 50), 0);
+	MirrorX = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n X axis"), wxDefaultPosition, wxSize(130, 50), 0);
 	bSizer2->Add(MirrorX, 0, wxALL, 5);
 
-	MirrorY = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n y axis"), wxDefaultPosition, wxSize(130, 50), 0);
+	MirrorY = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n Y axis"), wxDefaultPosition, wxSize(130, 50), 0);
 	bSizer2->Add(MirrorY, 0, wxALL, 5);
 
 	SaveButton = new wxButton( this, wxID_ANY, wxT("Save image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
