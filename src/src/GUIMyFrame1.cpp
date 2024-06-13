@@ -44,7 +44,6 @@ void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 		"Wszystkie pliki zdjêæ (*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff;*.ppm)|"
 		"*.bmp;*.gif;*.jpeg;*.jpg;*.png;*.tiff;*.ppm|"
 		"Pliki BMP (*.bmp)|*.bmp|"
-		"Pliki GIF (*.gif)|*.gif|"
 		"Pliki JPEG (*.jpeg;*.jpg)|*.jpeg;*.jpg|"
 		"Pliki PNG (*.png)|*.png|"
 		"Pliki TIFF (*.tiff)|*.tiff|"
@@ -63,9 +62,9 @@ void GUIMyFrame1::LoadButtonOnButtonClick(wxCommandEvent& event)
 	for (int i = ImagesHistory.size() - 1; i >= 0; --i)
 	{
 		delete ImagesHistory[i];
-		ImagesHistory.pop_back();
 	}
 
+	ImagesHistory.clear();
 
 	Img_Cpy = new wxImage(Img_Org.Copy());
 
@@ -331,7 +330,6 @@ void GUIMyFrame1::HideGrid()
 void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxString wildcard = "Pliki BMP (*.bmp)|*.bmp|"
-		"Pliki GIF (*.gif)|*.gif|"
 		"Pliki JPEG (*.jpeg;*.jpg)|*.jpeg;*.jpg|"
 		"Pliki PNG (*.png)|*.png|"
 		"Pliki TIFF (*.tiff)|*.tiff|"
@@ -347,11 +345,10 @@ void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 	switch (saveFileDialog.GetFilterIndex())
 	{
 	case 0:type = wxBITMAP_TYPE_BMP; break;
-	case 1:type = wxBITMAP_TYPE_GIF; break;
-	case 2:type = wxBITMAP_TYPE_JPEG; break;
-	case 3:type = wxBITMAP_TYPE_PNG; break;
-	case 4:type = wxBITMAP_TYPE_TIFF; break;
-	case 5:type = wxBITMAP_TYPE_PNM; break;
+	case 1:type = wxBITMAP_TYPE_JPEG; break;
+	case 2:type = wxBITMAP_TYPE_PNG; break;
+	case 3:type = wxBITMAP_TYPE_TIFF; break;
+	case 4:type = wxBITMAP_TYPE_PNM; break;
 	}
 
 
