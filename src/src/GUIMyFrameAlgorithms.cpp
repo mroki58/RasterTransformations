@@ -505,6 +505,8 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	//wywalenie wektorow
 	delete[] vectors;
 	delete[] vectors_copy;
+	Img_Cpy = CutXborder(Img_Cpy);
+	Img_Cpy = CutYborder(Img_Cpy);
 	Draw();
 }
 
