@@ -219,14 +219,7 @@ void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
 		text_handler->Enable();
 		(*flag_handler) = 1;
 	}
-}/*
- ogolnie moja metoda dziala tak, ze patrze sobie na pixel i na podstawie podanych parametrow obliczam
- jaki pixel z niezdeformowanego obrazka powinien tu byc
- jedyny szkopul jest taki ze jak mamy barrel disortion to ten algorytm ucina troche obrazek
- nie jestem pewien czy jest to blad czy nie
- fianlnie nie potrzebowalem interpolacji
- i jestem (niestety prawie tylko) pewien ze te parametry to beda rozszerzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
- */
+}
 void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 {
 	// TODO: Implement DistortionButtonOnButtonClick
@@ -321,6 +314,36 @@ void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 void GUIMyFrame1::ShowGrid()
 {
 
+	int imageWidth = Img_Cpy->GetSize().GetWidth();
+	int imageHeight = Img_Cpy->GetSize().GetHeight();
+	wxBitmap bitmap(*Img_Cpy);
+
+	wxStaticBitmap* imageCtrl = new wxStaticBitmap(this, wxID_ANY, bitmap);
+
+	int buttonSize = 50;
+	int numCols = imageWidth / buttonSize;
+	int numRows = imageHeight / buttonSize;
+
+	wxPanel* panel = new wxPanel(this);
+	wxGridSizer* gridSizer = new wxGridSizer(numRows, numCols, 0, 0);
+
+	for (int row = 0; row < numRows; ++row)
+	{
+		for (int col = 0; col < numCols; ++col)
+		{
+			wxButton* button = new wxButton(panel, wxID_ANY, "", wxDefaultPosition, wxSize(buttonSize, buttonSize));
+			//button->Bind(wxEVT_BUTTON, &ImageButtonGrid::OnButtonClicked, this);
+			gridSizer->Add(button, 0, wxEXPAND);
+		}
+	}
+
+	panel->SetSizer(gridSizer);
+
+	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+	mainSizer->Add(imageCtrl, 0, wxALIGN_CENTER | wxTOP, 10);
+	mainSizer->Add(panel, 0, wxALIGN_CENTER | wxTOP, 10);
+
+	SetSizerAndFit(mainSizer);
 }
 void GUIMyFrame1::HideGrid()
 {
