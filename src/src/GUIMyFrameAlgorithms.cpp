@@ -75,7 +75,7 @@ void GUIMyFrame1::RotateImagePlane(double angle, int cx, int cy)
 void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmiana2, int camera_pos)
 {
 	camera_pos = camera_pos / 100.;
-	double d_zmiana1 = zmiana1 / 100.0;
+	double d_zmiana1 = zmiana1 / 100.0; 
 	double d_zmiana2 = zmiana2 / 100.0;
 
 	unsigned char* old = Img_Org.GetData(); // stare dane z obrazka
