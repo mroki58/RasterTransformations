@@ -85,6 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>c:\Biblioteki\include\msvc;c:\Biblioteki\include\;$(IncludePath)</IncludePath>
     <LibraryPath>c:\Biblioteki\lib\vc_x64_lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>c:\Biblioteki\include\msvc;c:\Biblioteki\include\;$(IncludePath)</IncludePath>
