@@ -137,7 +137,8 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	m8.data[2][2] = 1;
 	m8.data[2][3] = 0;
 	m8.data[3][3] = 1;
-
+    
+	
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].data[3] = 1;
@@ -456,10 +457,10 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	int d = width > height ? height : width;
 	d = d / 2;
 
-	double paramA = A; // to powinno tylko wplywac na najdalsze pixele
-	double paramB = B; // takie bardzije uniwerslane i chyba to jest ten parametr alpha z wymagan podstawowych
-	double paramC = C; // kolejne najbardziej uniwersalne wierzac zrodlu
-	double paramD = 1.0 - paramA - paramB - paramC;// skalowanie liniowe albo w sumie w tym wypadku jego brak
+	double paramA = A; // wplywa na najdalsze piskele
+	double paramB = B; // uniwersalny paramtr
+	double paramC = C; // parametr alpha z podstawowego wymagania
+	double paramD = 1.0 - paramA - paramB - paramC;// skalowanie liniowe, w tym wypadku jego brak
 	if (flag == 1) paramD = D;
 
 	double centerX = (double)(width - 1) / 2.0;
@@ -505,6 +506,8 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	//wywalenie wektorow
 	delete[] vectors;
 	delete[] vectors_copy;
+	Img_Cpy = CutXborder(Img_Cpy);
+	Img_Cpy = CutYborder(Img_Cpy);
 	Draw();
 }
 
