@@ -24,7 +24,7 @@ class GUIMyFrame1 : public MyFrame1
 		void SaveButtonOnButtonClick( wxCommandEvent& event );
 		void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event );
 		void OnCheckBoxToggle(wxCommandEvent& event);
-		void GridBoxToggle(wxCommandEvent& event);
+		//void GridBoxToggle(wxCommandEvent& event);
 		void MirrorButton3OnButtonClick(wxCommandEvent& event);
 		void MirrorButton4OnButtonClick(wxCommandEvent& event);
 	public:
@@ -75,8 +75,8 @@ class GUIMyFrame1 : public MyFrame1
 
 
 		//siateczka esz
-		void ShowGrid();
-		void HideGrid();
+		//void ShowGrid();
+		//void HideGrid();
 
 		//mirror image
 		void Mirror(int flag);

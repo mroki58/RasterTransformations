@@ -287,7 +287,7 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 }
 
-void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
+/*void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 {
 	if (GridBox->IsChecked())
 	{
@@ -309,7 +309,7 @@ void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 		SaveButton->Enable();
 		HideGrid();
 	}
-}
+}*/
 
 void GUIMyFrame1::MirrorButton3OnButtonClick(wxCommandEvent& event)
 {
@@ -320,14 +320,14 @@ void GUIMyFrame1::MirrorButton4OnButtonClick(wxCommandEvent& event)
 	Mirror(1);
 }
 
-void GUIMyFrame1::ShowGrid()
+/*void GUIMyFrame1::ShowGrid()
 {
 
 }
 void GUIMyFrame1::HideGrid()
 {
 
-}
+}*/
 void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxString wildcard = "Pliki BMP (*.bmp)|*.bmp|"
