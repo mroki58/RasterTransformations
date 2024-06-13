@@ -27,6 +27,8 @@ class MyFrame1 : public wxFrame
 		wxButton* ShearButton;
 		wxButton* DistortionButton;
 		wxButton* SaveButton;
+		wxButton* MirrorX;
+		wxButton* MirrorY;
 		wxScrolledWindow* ImgScrolledWindow;
 		wxCheckBox* GridBox;
 
@@ -38,6 +40,8 @@ class MyFrame1 : public wxFrame
 		virtual void DistortionButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void SaveButtonOnButtonClick( wxCommandEvent& event ) { event.Skip(); }
 		virtual void GridBoxToggle(wxCommandEvent& event) { event.Skip(); }
+		virtual void MirrorButton3OnButtonClick(wxCommandEvent& event) { event.Skip(); }
+		virtual void MirrorButton4OnButtonClick(wxCommandEvent& event) { event.Skip(); }
 		virtual void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event ) { event.Skip(); }
 
 

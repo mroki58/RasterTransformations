@@ -507,3 +507,66 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	delete[] vectors_copy;
 	Draw();
 }
+
+void GUIMyFrame1::Mirror(int flag)
+{
+	int width = Img_Cpy->GetSize().GetWidth();
+	int height = Img_Cpy->GetSize().GetHeight();
+
+	unsigned char* old = Img_Cpy->GetData(); 
+
+	Vector4* vectors = new Vector4[width * height];
+	Vector4* temp_vect = new Vector4;
+
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			vectors[j * width + i].SetColor(old[3 * (j * width + i)], old[3 * (j * width + i) + 1], old[3 * (j * width + i) + 2]);
+			vectors[j * width + i].data[0] = i;
+			vectors[j * width + i].data[1] = j;
+			vectors[j * width + i].data[2] = 0.0;
+		}
+	}
+
+	if (flag)
+	{
+		int n = width / 2;
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = 0; j < height; ++j)
+			{
+				temp_vect->SetColor(vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+				vectors[j * width + i].SetColor(vectors[j * width + width - 1 - i].GetRed(), vectors[j * width + width - 1 - i].GetGreen(), vectors[j * width + width - 1 - i].GetBlue());
+				vectors[j * width + width - 1 - i].SetColor(temp_vect->GetRed(), temp_vect->GetGreen(), temp_vect->GetBlue());
+			}
+		}
+	}
+	else
+	{
+		int n = height / 2;
+		for (int i = 0; i < width; ++i)
+		{
+			for (int j = 0; j < n; ++j)
+			{
+				temp_vect->SetColor(vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+				vectors[j * width + i].SetColor(vectors[(height - 1 - j) * width + i].GetRed(), vectors[(height - 1 - j) * width + i].GetGreen(), vectors[(height - 1 - j) * width + i].GetBlue());
+				vectors[(height - 1 - j) * width + i].SetColor(temp_vect->GetRed(), temp_vect->GetGreen(), temp_vect->GetBlue());
+			}
+		}
+	}
+	ImagesHistory.push_back(Img_Cpy);
+	Img_Cpy = new wxImage(width, height);
+
+	// rysowanie
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; ++j)
+		{
+			Img_Cpy->SetRGB(vectors[j * width + i].GetX(), vectors[j * width + i].GetY(), vectors[j * width + i].GetRed(), vectors[j * width + i].GetGreen(), vectors[j * width + i].GetBlue());
+		}
+	}
+	delete[] vectors;
+	delete temp_vect;
+	Draw();
+}

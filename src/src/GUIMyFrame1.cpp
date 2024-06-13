@@ -311,39 +311,18 @@ void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 	}
 }
 
+void GUIMyFrame1::MirrorButton3OnButtonClick(wxCommandEvent& event)
+{
+	Mirror(0);
+}
+void GUIMyFrame1::MirrorButton4OnButtonClick(wxCommandEvent& event)
+{
+	Mirror(1);
+}
+
 void GUIMyFrame1::ShowGrid()
 {
 
-	int imageWidth = Img_Cpy->GetSize().GetWidth();
-	int imageHeight = Img_Cpy->GetSize().GetHeight();
-	wxBitmap bitmap(*Img_Cpy);
-
-	wxStaticBitmap* imageCtrl = new wxStaticBitmap(this, wxID_ANY, bitmap);
-
-	int buttonSize = 50;
-	int numCols = imageWidth / buttonSize;
-	int numRows = imageHeight / buttonSize;
-
-	wxPanel* panel = new wxPanel(this);
-	wxGridSizer* gridSizer = new wxGridSizer(numRows, numCols, 0, 0);
-
-	for (int row = 0; row < numRows; ++row)
-	{
-		for (int col = 0; col < numCols; ++col)
-		{
-			wxButton* button = new wxButton(panel, wxID_ANY, "", wxDefaultPosition, wxSize(buttonSize, buttonSize));
-			//button->Bind(wxEVT_BUTTON, &ImageButtonGrid::OnButtonClicked, this);
-			gridSizer->Add(button, 0, wxEXPAND);
-		}
-	}
-
-	panel->SetSizer(gridSizer);
-
-	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
-	mainSizer->Add(imageCtrl, 0, wxALIGN_CENTER | wxTOP, 10);
-	mainSizer->Add(panel, 0, wxALIGN_CENTER | wxTOP, 10);
-
-	SetSizerAndFit(mainSizer);
 }
 void GUIMyFrame1::HideGrid()
 {

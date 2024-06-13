@@ -38,6 +38,12 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	DistortionButton = new wxButton( this, wxID_ANY, wxT("Other image\n distortions"), wxPoint( -1,-1 ), wxSize( 130,50 ), 0 );
 	bSizer2->Add( DistortionButton, 0, wxALL, 5 );
 
+	MirrorX = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n x axis"), wxDefaultPosition, wxSize(130, 50), 0);
+	bSizer2->Add(MirrorX, 0, wxALL, 5);
+
+	MirrorY = new wxButton(this, wxID_ANY, wxT("Mirror reflection\n y axis"), wxDefaultPosition, wxSize(130, 50), 0);
+	bSizer2->Add(MirrorY, 0, wxALL, 5);
+
 	SaveButton = new wxButton( this, wxID_ANY, wxT("Save image"), wxDefaultPosition, wxSize( 130,30 ), 0 );
 	bSizer2->Add( SaveButton, 0, wxALL, 5 );
 
@@ -74,6 +80,9 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 	RotateButton2->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::RotateButton2OnButtonClick ), NULL, this );
 	ShearButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::ShearButtonOnButtonClick ), NULL, this );
 	DistortionButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
+	MirrorX->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::MirrorButton3OnButtonClick), NULL, this);
+	MirrorY->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::MirrorButton4OnButtonClick), NULL, this);
+	DistortionButton->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::DistortionButtonOnButtonClick), NULL, this);
 	SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
 	GridBox->Connect(wxEVT_CHECKBOX, wxCommandEventHandler(MyFrame1::GridBoxToggle), NULL, this);
 	ImgScrolledWindow->Connect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
@@ -89,6 +98,8 @@ MyFrame1::~MyFrame1()
 	DistortionButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::DistortionButtonOnButtonClick ), NULL, this );
 	SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::SaveButtonOnButtonClick ), NULL, this );
 	GridBox->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::GridBoxToggle), NULL, this);
+	MirrorX->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::MirrorButton3OnButtonClick), NULL, this);
+	MirrorY->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::MirrorButton4OnButtonClick), NULL, this);
 	ImgScrolledWindow->Disconnect( wxEVT_UPDATE_UI, wxUpdateUIEventHandler( MyFrame1::ImgScrolledWindowOnUpdateUI ), NULL, this );
 
 }

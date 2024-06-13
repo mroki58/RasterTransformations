@@ -25,6 +25,8 @@ class GUIMyFrame1 : public MyFrame1
 		void ImgScrolledWindowOnUpdateUI( wxUpdateUIEvent& event );
 		void OnCheckBoxToggle(wxCommandEvent& event);
 		void GridBoxToggle(wxCommandEvent& event);
+		void MirrorButton3OnButtonClick(wxCommandEvent& event);
+		void MirrorButton4OnButtonClick(wxCommandEvent& event);
 	public:
 		/** Constructor */
 		GUIMyFrame1( wxWindow* parent );
@@ -76,7 +78,10 @@ class GUIMyFrame1 : public MyFrame1
 		void ShowGrid();
 		void HideGrid();
 
+		//mirror image
+		void Mirror(int flag);
 
+		//undo
 		std::vector<wxImage*> ImagesHistory;
 		wxMenuBar* menuBar;
 		wxMenu* edit;
