@@ -137,7 +137,8 @@ void GUIMyFrame1::RotateOtherAxis(int angle1, int angle2, int zmiana1, int zmian
 	m8.data[2][2] = 1;
 	m8.data[2][3] = 0;
 	m8.data[3][3] = 1;
-
+    
+	
 	for (int i = 0; i < size; ++i)
 	{
 		vectors[i].data[3] = 1;
