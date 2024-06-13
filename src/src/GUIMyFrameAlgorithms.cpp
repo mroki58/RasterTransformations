@@ -457,10 +457,10 @@ void GUIMyFrame1::CorrectDisortion(double A, double B, double C, double D, int f
 	int d = width > height ? height : width;
 	d = d / 2;
 
-	double paramA = A; // to powinno tylko wplywac na najdalsze pixele
-	double paramB = B; // takie bardzije uniwerslane i chyba to jest ten parametr alpha z wymagan podstawowych
-	double paramC = C; // kolejne najbardziej uniwersalne wierzac zrodlu
-	double paramD = 1.0 - paramA - paramB - paramC;// skalowanie liniowe albo w sumie w tym wypadku jego brak
+	double paramA = A; // wplywa na najdalsze piskele
+	double paramB = B; // uniwersalny paramtr
+	double paramC = C; // parametr alpha z podstawowego wymagania
+	double paramD = 1.0 - paramA - paramB - paramC;// skalowanie liniowe, w tym wypadku jego brak
 	if (flag == 1) paramD = D;
 
 	double centerX = (double)(width - 1) / 2.0;
