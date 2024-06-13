@@ -33,6 +33,7 @@ GUIMyFrame1::~GUIMyFrame1()
 	{
 		delete ImagesHistory[i];
 	}
+	delete Img_Cpy;
 }
 
 
