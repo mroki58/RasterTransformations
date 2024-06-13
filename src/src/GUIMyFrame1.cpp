@@ -219,14 +219,7 @@ void GUIMyFrame1::OnCheckBoxToggle(wxCommandEvent& event)
 		text_handler->Enable();
 		(*flag_handler) = 1;
 	}
-}/*
- ogolnie moja metoda dziala tak, ze patrze sobie na pixel i na podstawie podanych parametrow obliczam
- jaki pixel z niezdeformowanego obrazka powinien tu byc
- jedyny szkopul jest taki ze jak mamy barrel disortion to ten algorytm ucina troche obrazek
- nie jestem pewien czy jest to blad czy nie
- fianlnie nie potrzebowalem interpolacji
- i jestem (niestety prawie tylko) pewien ze te parametry to beda rozszerzone wlasciwosci obiektywu patrzac na stronke na podstawie ktorej robilem ten algorytm
- */
+}
 void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 {
 	// TODO: Implement DistortionButtonOnButtonClick
@@ -294,7 +287,7 @@ void GUIMyFrame1::DistortionButtonOnButtonClick(wxCommandEvent& event)
 
 }
 
-void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
+/*void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 {
 	if (GridBox->IsChecked())
 	{
@@ -316,16 +309,25 @@ void GUIMyFrame1::GridBoxToggle(wxCommandEvent& event)
 		SaveButton->Enable();
 		HideGrid();
 	}
+}*/
+
+void GUIMyFrame1::MirrorButton3OnButtonClick(wxCommandEvent& event)
+{
+	Mirror(0);
+}
+void GUIMyFrame1::MirrorButton4OnButtonClick(wxCommandEvent& event)
+{
+	Mirror(1);
 }
 
-void GUIMyFrame1::ShowGrid()
+/*void GUIMyFrame1::ShowGrid()
 {
 
 }
 void GUIMyFrame1::HideGrid()
 {
 
-}
+}*/
 void GUIMyFrame1::SaveButtonOnButtonClick(wxCommandEvent& event)
 {
 	wxString wildcard = "Pliki BMP (*.bmp)|*.bmp|"
